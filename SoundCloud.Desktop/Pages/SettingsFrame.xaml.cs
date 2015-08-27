@@ -24,33 +24,64 @@ namespace SoundCloud.Desktop {
 
             cmbAudioDevice.SelectionChanged += (sender, e) => {
                 Player.SetAudioDevice(cmbAudioDevice.SelectedIndex);
-                AppSettings.Settings["device"] = Player.AvailableDevices[cmbAudioDevice.SelectedIndex].driver;
+                AppSettings.Settings["device"] = Player.AvailableDevices[cmbAudioDevice.SelectedIndex].id;
             };
 
-            var list = Player.AvailableDevices;
+            // Load device from settings
+            string device = "";
+            if(AppSettings.Settings.ContainsKey("device"))
+                device = (string)AppSettings.Settings["device"];
 
             // Add no sound selection
             cmbAudioDevice.Items.Add("<No Sound>");
+            var list = Player.AvailableDevices;
             for(int i = 1; i < list.Count; i++) {
-                var name = list[i].name;
-                if(name.Contains('(')) name = list[i].name.Substring(0, list[i].name.IndexOf('(') - 1);
-
-                cmbAudioDevice.Items.Add(name);
-                if(list[i].IsDefault) cmbAudioDevice.SelectedIndex = i;
-            }
-
-            if(!AppSettings.Settings.ContainsKey("device"))
-                AppSettings.Settings.Add("device", list[1].driver);
-
-            for(int i = 0; i < list.Count; i++)
-                if(list[i].driver == (string)AppSettings.Settings["device"]) {
+                cmbAudioDevice.Items.Add(list[i].name.Contains("(") ? list[i].name.Substring(0, list[i].name.IndexOf("(")) : list[i].name);
+                if(list[i].id == device)
                     cmbAudioDevice.SelectedIndex = i;
-                    Player.SetAudioDevice(i);
-                }
-
+            }
 
             // Clear login
             btnClearLogin.Click += (sender, e) => System.IO.File.Delete("login.json");
+            cbxAutoUpdate.Checked += cbxAutoUpdate_Changed;
+            cbxAutoUpdate.Unchecked += cbxAutoUpdate_Changed;
+        }
+
+        void cbxAutoUpdate_Changed(object sender, RoutedEventArgs e) {
+            if(!cbxAutoUpdate.IsChecked.HasValue)
+                return;
+            if(AppSettings.Settings.ContainsKey("autoUpdate"))
+                AppSettings.Settings["autoupdate"] = cbxAutoUpdate.IsChecked;
+            else
+                AppSettings.Settings.Add("autoUpdate", cbxAutoUpdate.IsChecked);
+        }
+        void btnCheckUpdate_Click(object sender, RoutedEventArgs e) { AppSettings.CheckUpdate(); }
+
+        void Link_MouseEnter(object sender, MouseEventArgs e) {
+            var o = (sender as FaxUi.IcoMoon);
+            if(o.Icon == FaxUi.MoonIcon.SoundCloud)
+                o.Foreground = UICore.FromHex("#FFFF8531");
+            else if(o.Icon == FaxUi.MoonIcon.Globe)
+                o.Foreground = UICore.FromHex("#FF3FA8FF");
+        }
+        void Link_MouseLeave(object sender, MouseEventArgs e) {
+            var o = (sender as FaxUi.IcoMoon);
+            if(o.Icon == FaxUi.MoonIcon.SoundCloud)
+                o.Foreground = UICore.FromHex("#FFFF6800");
+            else if(o.Icon == FaxUi.MoonIcon.Globe)
+                o.Foreground = UICore.FromHex("#FF008BFF");
+        }
+        void Link_MouseDown(object sender, MouseButtonEventArgs e) {
+            var icon = (sender as FaxUi.IcoMoon).Icon;
+            var url = "";
+            if(icon == FaxUi.MoonIcon.SoundCloud)
+                url = "https://soundcloud.com/faxity";
+            else if(icon == FaxUi.MoonIcon.Globe)
+                url = "http://scdesktop.us.to";
+            else
+                return;
+
+            System.Diagnostics.Process.Start(url);
         }
     }
 }

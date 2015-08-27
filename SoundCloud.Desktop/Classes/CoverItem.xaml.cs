@@ -40,9 +40,9 @@ namespace SoundCloud.Desktop {
             duration.Text = track.Duration.ToTime();
 
             // Download track
-            download.MouseDown += (sender, e) => Player.DownloadTrack(track);
-            download.MouseEnter += (sender, e) => download.Opacity = 1;
-            download.MouseLeave += (sender, e) => download.Opacity = 0.4;
+            //download.MouseDown += (sender, e) => Player.DownloadTrack(track);
+            //download.MouseEnter += (sender, e) => download.Opacity = 1;
+            //download.MouseLeave += (sender, e) => download.Opacity = 0.4;
         }
 
         BitmapImage GetImage(string url) {

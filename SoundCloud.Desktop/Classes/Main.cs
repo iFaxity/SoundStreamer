@@ -21,6 +21,8 @@ using FaxLib.Input.WPF;
 using FaxLib.Input;
 using System.Net;
 using System.Diagnostics;
+using Newtonsoft.Json.Linq;
+using System.Windows.Threading;
 
 namespace SoundCloud.Desktop {
     public static class Shortcuts {
@@ -56,6 +58,7 @@ namespace SoundCloud.Desktop {
         }
     }
 
+    // Static UI specific functions
     public static class UICore {
         /// <summary>
         /// Toggles spinner on the grid. If it toggled on then it returns true if not it returns false.
@@ -141,6 +144,13 @@ namespace SoundCloud.Desktop {
 
             return foundChild;
         }
+
+        public static Brush FromHex(string hex) {
+            if(hex.Length == 9 && hex.StartsWith("#"))
+                return new BrushConverter().ConvertFrom(hex) as Brush;
+            else
+                throw new Exception("Brush hex was invalid.");
+        }
     }
 
     public class AppSettings {
@@ -167,28 +177,57 @@ namespace SoundCloud.Desktop {
 
             // Load json file for all information
             var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(settingJsonPath));
-            Settings = json["settings"] as Dictionary<string, object>;
+
+            Settings = (json["settings"] as JObject).ToObject<Dictionary<string, object>>();
             if(Settings == null)
                 Settings = new Dictionary<string, object>();
 
+            //Playlists = (json["playlists"] as JObject).ToObject<List<Playlist>>();
             Playlists = json["playlists"] as List<Playlist>;
             if(Playlists == null)
                 Playlists = new List<Playlist>();
+
+            // Set audio device from settings
+            if(Settings.ContainsKey("device")) {
+                var device = (string)Settings["device"];
+                var list = Player.AvailableDevices;
+                for(int i = 1; i < list.Count; i++) {
+                    if(list[i].id == device)
+                        Player.SetAudioDevice(i);
+                }
+            }
         }
 
-        const string version = "0.1 Stable";
-        public static bool IsUpdated() {
-            var latest = new WebClient().DownloadString(new Uri("http://scdesktop.us.to/version/latest?v=stable"));
-            var current = int.Parse(version.Substring(0, version.IndexOf(" ") - 1).Replace(".", ""));
-            return current >= int.Parse(latest.Replace(".", ""));
-        }
+        const string version = "1.0 Stable";
+        // Cheks for updates and prompts the user to update
+        static Task _uTask;
+        public static void CheckUpdate() {
+            if(_uTask != null)
+                return;
 
+            _uTask = Task.Factory.StartNew(() => {
+                var latest = new WebClient().DownloadString(new Uri("http://scdesktop.us.to/version/latest?v=stable"));
+                var current = int.Parse(version.Substring(0, version.IndexOf(" ") - 1).Replace(".", ""));
+
+                Dispatcher.CurrentDispatcher.Invoke(() => { 
+                    if(current < int.Parse(latest.Replace(".", "")))
+                        MessageBox.Show("No new Update found please continue to enjoy the application", "No update found", MessageBoxButton.OK);
+                    else {
+                        var res = MessageBox.Show("A new update was found. Do you want to update now? This will close the application.", "New update found", MessageBoxButton.YesNo);
+                        if(res == MessageBoxResult.Yes)
+                            Update();
+                    }
+                    _uTask = null;
+                });
+            });
+        }
+        // Update the application
         public static void Update() {
             var wc = new WebClient();
             wc.DownloadFileCompleted += (o, args) => {
                 if(!File.Exists("install.exe"))
                     throw new Exception("Unable to update. Intaller not found!");
-                Process.Start("install.exe", "-hidden");
+                Process.Start("install.exe", "-update");
                 Environment.Exit(0);
             };
             wc.DownloadFileAsync(new Uri("http://scdesktop.us.to/api/latest.php?v=stable"), "install.exe");

@@ -30,8 +30,14 @@ namespace SoundCloud.Desktop {
         // Login and Initialize Application UI
         public MainWindow() {
             // Loads all the settings
-            AppSettings.Load();
             Player.Init(new System.Windows.Interop.WindowInteropHelper(this).Handle);
+            AppSettings.Load();
+            // Update check
+            if(AppSettings.Settings.ContainsKey("autoUpdate") && (bool)AppSettings.Settings["autoUpdate"] && !AppSettings.IsUpdated()) {
+                var res = MessageBox.Show("Do you want to update to a newer version?", "New update detected!", MessageBoxButton.YesNo);
+                if(res == MessageBoxResult.Yes)
+                    AppSettings.Update();
+            }
 
             InitializeComponent();
 
@@ -46,8 +52,9 @@ namespace SoundCloud.Desktop {
             Player.SongStarted += Player_SongStarted;
 
             // Player Progressbar & Progressbar Popup Events
-            playerPop.MouseDown += playerPop_MouseDown;
-            playerPop.MouseLeave += playerPop_MouseLeave;
+            //playerPop.MouseDown += playerPop_MouseDown;
+            //playerPop.MouseLeave += playerBbar_MouseLeave;
+            playerBbar.MouseDown += playerPop_MouseDown;
             playerBbar.MouseLeave += playerBbar_MouseLeave;
             playerBbar.MouseEnter += (sender, e) => playerPop.IsOpen = true;
             playerBbar.MouseMove += playerBbar_MouseMove;
@@ -55,7 +62,7 @@ namespace SoundCloud.Desktop {
             // Volume Popup Events
             playerVolPop.MouseLeave += playerVolPop_MouseLeave;
             playerVolSlider.ValueChanged += playerVolSlider_ValueChanged;
-            playerVol.MouseDoubleClick += playerVol_MouseDoubleClick;
+            playerVol.MouseDown += playerVol_MouseDown;
             playerVol.MouseEnter += playerVol_MouseEnter;
             playerVol.MouseLeave += playerVol_MouseLeave;
 
@@ -66,8 +73,10 @@ namespace SoundCloud.Desktop {
 
             // Search Box Events
             tbxSearch.KeyDown += (sender, e) => {
-                if(e.Key == Key.Return)
+                if(e.Key == Key.Return) {
                     contentFrame.Navigate(new SearchFrame(tbxSearch.Text));
+                    menuSelected = "search";
+                }
             };
             tbxSearch.GotFocus += (sender, e) => tbxSearch.Text = "";
             tbxSearch.LostFocus += (sender, e) => {
@@ -92,13 +101,15 @@ namespace SoundCloud.Desktop {
             }
 
             // Initialise Shortcut Keys
-            Shortcuts.Init(this);
+            if(!AppSettings.Settings.ContainsKey("hotkeysEnabled") || (bool)AppSettings.Settings["hotkeysEnabled"])
+                Shortcuts.Init(this);
+
             // Navigate to login page
             contentFrame.Navigate(new LoginPage(this));
             menuSelected = "stream";
         }
 
-        #region Events
+        #region Menu Events
         public void Menu_Click(object sender, MouseEventArgs e) {
             // If not connected then dont try to change
             if(!SoundCloudClient.IsConnected)
@@ -133,26 +144,49 @@ namespace SoundCloud.Desktop {
             Cursor = Cursors.Hand;
             var t = sender as TextBlock;
             t.Padding = new Thickness(5, 0, 0, 0);
-            t.Foreground = t.Foreground = FromHex("#FFC8C8C8");
+            t.Foreground = t.Foreground = UICore.FromHex("#FFC8C8C8");
         }
         public void Menu_Leave(object sender, MouseEventArgs e) {
             Cursor = Cursors.Arrow;
             var t = sender as TextBlock;
             t.Padding = new Thickness(0);
-            t.Foreground = FromHex("#FFB7B7B7");
+            t.Foreground = UICore.FromHex("#FFB7B7B7");
         }
+        #endregion
+
+        #region Player Events
         public void Player_MouseEnter(object sender, MouseEventArgs e) {
             var ico = sender as FaxUi.IcoMoon;
-            ico.Foreground = FromHex("#FF666666"); // FFF5F5F5
+            ico.Foreground = UICore.FromHex("#FF666666"); // FFF5F5F5
         }
         public void Player_MouseLeave(object sender, MouseEventArgs e) {
             var ico = sender as FaxUi.IcoMoon;
-            ico.Foreground = FromHex("#FFD3D3D3");
+            ico.Foreground = UICore.FromHex("#FFD3D3D3");
         }
+        public void Player_SongStarted(object sender, EventArgs e) {
+            Dispatcher.Invoke(() => {
+                // Set track info and start the track
+                var track = sender as Track;
+                playerTotal.Text = track.Duration.ToTime();
+                playerTitle.Text = track.Title;
+                playerPlay.Icon = FaxUi.MoonIcon.Pause;
+                Player.Volume = (float)playerVolSlider.Value;
 
-        public void ChangeVolume(float volume) {
-            playerVolSlider.Value = volume;
+                if(string.IsNullOrEmpty(track.ArtworkUrl)) {
+                    playerImg.Source = null;
+                    return;
+                }
+
+                // Get Track Image
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(track.ArtworkUrl, UriKind.Absolute);
+                bitmap.EndInit();
+                playerImg.Source = bitmap;
+            });
         }
+        public void ChangeVolume(float volume) { playerVolSlider.Value = volume; }
+
         public void playerPlay_MouseDown(object sender, MouseButtonEventArgs e) {
             if(Player.State == BASSActive.BASS_ACTIVE_STOPPED)
                 return;
@@ -167,34 +201,8 @@ namespace SoundCloud.Desktop {
             else
                 playerPlay.Icon = FaxUi.MoonIcon.Play;
         }
-        public void playerPrev_MouseDown(object sender, MouseButtonEventArgs e) {
-            Player.Play(Player.TrackIndex - 1);
-        }
-        public void playerNext_MouseDown(object sender, MouseButtonEventArgs e) {
-            Player.Play(Player.TrackIndex + 1);
-        }
-
-        public void Player_SongStarted(object sender, EventArgs e) {
-            Dispatcher.Invoke(() => {
-                // Set track info and start the track
-                var track = sender as Track;
-                playerTotal.Text = track.Duration.ToTime();
-                playerTitle.Text = track.Title;
-                playerPlay.Icon = FaxUi.MoonIcon.Pause;
-                Player.Volume = (float)playerVolSlider.Value;
-
-                if(string.IsNullOrEmpty(track.ArtworkUrl)) {
-                    playerImg.Source = null;
-                    return;
-                }
-                // Get Track Image
-                BitmapImage bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(track.ArtworkUrl, UriKind.Absolute);
-                bitmap.EndInit();
-                playerImg.Source = bitmap;
-            });
-        }
+        public void playerPrev_MouseDown(object sender, MouseButtonEventArgs e) { Player.Play(Player.TrackIndex - 1); }
+        public void playerNext_MouseDown(object sender, MouseButtonEventArgs e) { Player.Play(Player.TrackIndex + 1); }
 
         public void playerPop_MouseDown(object sender, MouseButtonEventArgs e) {
             if(Player.State == BASSActive.BASS_ACTIVE_STOPPED)
@@ -203,16 +211,9 @@ namespace SoundCloud.Desktop {
             var pos = e.GetPosition(playerPbar).X;
             Player.SetPos(playerPbar.Value = (pos / playerPbar.ActualWidth) * playerPbar.MaxValue);
         }
-        public void playerPop_MouseLeave(object sender, MouseEventArgs e) {
-            if(playerBbar.IsMouseOver)
-                return;
-            playerPop.IsOpen = false;
-        }
-
         public void playerBbar_MouseLeave(object sender, MouseEventArgs e) {
-            if(playerBbar.IsMouseOver)
-                return;
-            playerPop.IsOpen = false;
+            if(!playerBbar.IsMouseOver)
+                playerPop.IsOpen = false;
         }
         public void playerBbar_MouseMove(object sender, MouseEventArgs e) {
             var pos = e.GetPosition(playerPbar).X;
@@ -239,13 +240,14 @@ namespace SoundCloud.Desktop {
             else
                 playerVol.Icon = FaxUi.MoonIcon.VolumeOff;
         }
-        public void playerVol_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
-            if(Player.Volume > 0f) {
-                Player.Volume = 0f;
+
+        public void playerVol_MouseDown(object sender, MouseButtonEventArgs e) {
+            if(playerVolSlider.Value > 0) {
+                playerVolSlider.Value = 0;
                 playerVol.Icon = FaxUi.MoonIcon.VolumeMute;
             }
             else {
-                Player.Volume = 1f;
+                playerVolSlider.Value = 1;
                 playerVol.Icon = FaxUi.MoonIcon.VolumeHigh;
             }
         }
@@ -259,7 +261,9 @@ namespace SoundCloud.Desktop {
             playerVolPop.IsOpen = false;
             Player_MouseLeave(sender, e);
         }
+        #endregion
 
+        #region Spectrum & Misc Events
         public void OnTick(object sender, EventArgs e) {
             // Stop if nothing is happening
             if(Player.State == BASSActive.BASS_ACTIVE_STOPPED)
@@ -310,12 +314,5 @@ namespace SoundCloud.Desktop {
             }
         }
         #endregion
-
-        Brush FromHex(string hex) {
-            if(hex.Length == 9 && hex.StartsWith("#"))
-                return new BrushConverter().ConvertFrom(hex) as Brush;
-            else
-                throw new Exception("Brush hex was invalid.");
-        }
     }
 }

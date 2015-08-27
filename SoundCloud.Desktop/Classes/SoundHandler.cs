@@ -19,6 +19,7 @@ using Un4seen.Bass.Misc;
 using Newtonsoft.Json;
 using System.Windows.Threading;
 using System.Diagnostics;
+using System.Threading;
 
 namespace SoundCloud.Desktop {
     public static class Player {
@@ -82,8 +83,7 @@ namespace SoundCloud.Desktop {
         #endregion
 
         #region Public Methods
-        public static void Init() { Init(IntPtr.Zero); }
-        public static void Init(IntPtr handle) {
+        public static void Init(IntPtr handle = default(IntPtr)) {
             var path = Utils.Is64Bit ? @"Bass\x64" : @"Bass\x86";
 
             // Load Bass (xCompatible)
@@ -129,24 +129,25 @@ namespace SoundCloud.Desktop {
         #endregion
 
         public static void Play(int index) {
-            if(index < 0 || index >= Tracks.Count) {
-                // Check if track is already playing
-                if(TrackIndex == 0)
-                    return;
-                else
-                    TrackIndex = 0;
-            }
+            if(index < 0)
+                TrackIndex = Tracks.Count - 1;
+            else if(index >= Tracks.Count)
+                TrackIndex = 0;
             else
                 TrackIndex = index;
             // Play from track ID
             PlayTrack(Tracks[TrackIndex]);
         }
-        static void PlayTrack(int trackId) {
-            Task.Factory.StartNew(() => {
-                // Check player state
 
+        static Task _task;
+        public static void PlayTrack(int trackId) {
+            if(_task != null)
+                return;
+            //await _lock.WaitAsync();
+            _task = Task.Factory.StartNew(() => {
+                // Check player state
                 if(State != BASSActive.BASS_ACTIVE_STOPPED)
-                    Bass.BASS_Stop();
+                    Bass.BASS_ChannelStop(channel);
 
                 // Play local
                 var path = localTrackPath + trackId + ".mp3";
@@ -166,7 +167,7 @@ namespace SoundCloud.Desktop {
                 Bass.BASS_Start();
                 var res = Bass.BASS_ChannelPlay(channel, false);
                 // Error when attemting to start song
-                if(res == false) {
+                if(!res) {
                     MessageBox.Show(string.Format("Track '{0}' not playable. Error: {1}", track.Title, Bass.BASS_ErrorGetCode()), "Playback Error", MessageBoxButton.OK);
                     OnSongEnded();
                     return;
@@ -175,6 +176,8 @@ namespace SoundCloud.Desktop {
                 // Set audio device and invoke started event
                 SetAudioDevice(_deviceIndex);
                 OnSongStarted(track);
+                _task = null;
+                //_lock.Release();
             });
         }
 
