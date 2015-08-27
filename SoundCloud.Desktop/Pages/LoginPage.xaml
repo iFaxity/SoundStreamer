@@ -1,0 +1,23 @@
+﻿<Page x:Class="SoundCloud.Desktop.LoginPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      mc:Ignorable="d" 
+      d:DesignHeight="200" d:DesignWidth="300"
+	Title="LoginPage">
+    <Grid x:Name="grid" Background="White">
+        <Border Background="#FFECECEC" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="150" Width="250">
+            <Grid>
+                <TextBlock HorizontalAlignment="Left" Margin="10,15,0,0" TextWrapping="Wrap" Text="Username" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" Margin="10,60,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top"/>
+
+                <TextBox x:Name="username" Margin="70,15,10,0" HorizontalAlignment="Stretch" Height="23" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                <PasswordBox x:Name="password" Margin="70,60,10,0" HorizontalAlignment="Stretch" Height="23" VerticalAlignment="Top"/>
+                <Button x:Name="login" Content="Login" HorizontalAlignment="Right" Margin="0,0,10,30" VerticalAlignment="Bottom" Width="75" TabIndex="4" IsDefault="True" Click="login_Click"/>
+                <CheckBox x:Name="rememberMe" Content="Remember me" HorizontalAlignment="Left" Margin="10,0,0,32.5" VerticalAlignment="Bottom" ClickMode="Press"/>
+                <Button x:Name="offline" Content="Offline" Visibility="Hidden" HorizontalAlignment="Right" Margin="0,0,10,5" VerticalAlignment="Bottom" Width="75" TabIndex="4" Click="offline_Click"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

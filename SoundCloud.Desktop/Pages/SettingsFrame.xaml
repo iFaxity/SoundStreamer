@@ -1,0 +1,23 @@
+﻿<Page x:Class="SoundCloud.Desktop.SettingsFrame"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:fax="http://schemas.faxlib.com/wpf"
+      mc:Ignorable="d" 
+      d:DesignHeight="370" d:DesignWidth="788"
+	Title="Me">
+
+    <Grid Background="White">
+        <ComboBox x:Name="cmbAudioDevice" HorizontalAlignment="Left" Margin="90,22,0,0" Width="200" VerticalAlignment="Top"/>
+        <TextBlock HorizontalAlignment="Left" Margin="10,24,0,0" TextWrapping="Wrap" Text="Audio Device:" VerticalAlignment="Top"/>
+        <TextBlock FontSize="20" HorizontalAlignment="Right" TextWrapping="Wrap" Text="Coded by Faxity" VerticalAlignment="Bottom" Margin="0,0,194,10"/>
+        <Button x:Name="btnClearLogin" Content="Clear Auto Login" HorizontalAlignment="Left" Margin="10,74,0,0" VerticalAlignment="Top" Width="114" Height="28"/>
+        <Button x:Name="btnCheckUpdate" Content="Check For Updates" HorizontalAlignment="Left" Margin="10,148,0,0" VerticalAlignment="Top" Width="114" Height="28"/>
+        <CheckBox x:Name="cbxAutoUpdate" Content="Startup Auto Update Check" HorizontalAlignment="Left" Margin="10,181,0,0" VerticalAlignment="Top"/>
+        <fax:IcoMoon Icon="Facebook" Width="20" Height="20" Margin="758,350,0,0"></fax:IcoMoon>
+        <fax:IcoMoon Icon="Twitter" Width="20" Height="20" Margin="733,350,0,0"/>
+        <fax:IcoMoon Icon="SoundCloud" Width="20" Height="20" Margin="708,350,0,0"/>
+        <fax:IcoMoon Icon="Globe" Width="20" Height="20" Margin="683,350,0,0"/>
+    </Grid>
+</Page>
