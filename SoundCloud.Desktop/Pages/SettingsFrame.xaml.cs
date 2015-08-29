@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Newtonsoft.Json;
 
 namespace SoundCloud.Desktop {
     /// <summary>
@@ -24,36 +12,40 @@ namespace SoundCloud.Desktop {
 
             cmbAudioDevice.SelectionChanged += (sender, e) => {
                 Player.SetAudioDevice(cmbAudioDevice.SelectedIndex);
-                AppSettings.Settings["device"] = Player.AvailableDevices[cmbAudioDevice.SelectedIndex].id;
+                var id = Player.AvailableDevices[cmbAudioDevice.SelectedIndex].id;
+                if(id != null)
+                    Properties.Settings.Default.Device = id;
             };
 
-            // Load device from settings
-            string device = "";
-            if(AppSettings.Settings.ContainsKey("device"))
-                device = (string)AppSettings.Settings["device"];
-
-            // Add no sound selection
-            cmbAudioDevice.Items.Add("<No Sound>");
+            // Add devices to list and set device to the saved one
             var list = Player.AvailableDevices;
             for(int i = 1; i < list.Count; i++) {
                 cmbAudioDevice.Items.Add(list[i].name.Contains("(") ? list[i].name.Substring(0, list[i].name.IndexOf("(")) : list[i].name);
-                if(list[i].id == device)
+                if(list[i].id == Properties.Settings.Default.Device)
                     cmbAudioDevice.SelectedIndex = i;
             }
 
             // Clear login
             btnClearLogin.Click += (sender, e) => System.IO.File.Delete("login.json");
+
+            // Hotkeys Toggle
             cbxAutoUpdate.Checked += cbxAutoUpdate_Changed;
             cbxAutoUpdate.Unchecked += cbxAutoUpdate_Changed;
+            cbxAutoUpdate.IsChecked = Properties.Settings.Default.AutoUpdate;
+
+            // Hotkeys Toggle
+            cbxHotkeys.Checked += cbxHotkeys_Changed;
+            cbxHotkeys.Unchecked += cbxHotkeys_Changed;
+            cbxHotkeys.IsChecked = Properties.Settings.Default.HotkeysEnabled;
         }
 
         void cbxAutoUpdate_Changed(object sender, RoutedEventArgs e) {
-            if(!cbxAutoUpdate.IsChecked.HasValue)
-                return;
-            if(AppSettings.Settings.ContainsKey("autoUpdate"))
-                AppSettings.Settings["autoupdate"] = cbxAutoUpdate.IsChecked;
-            else
-                AppSettings.Settings.Add("autoUpdate", cbxAutoUpdate.IsChecked);
+            if(cbxAutoUpdate.IsChecked.HasValue)
+                Properties.Settings.Default.AutoUpdate = cbxAutoUpdate.IsChecked.Value;
+        }
+        void cbxHotkeys_Changed(object sender, RoutedEventArgs e) {
+            if(cbxHotkeys.IsChecked.HasValue)
+                Properties.Settings.Default.HotkeysEnabled = cbxHotkeys.IsChecked.Value;
         }
         void btnCheckUpdate_Click(object sender, RoutedEventArgs e) { AppSettings.CheckUpdate(); }
 

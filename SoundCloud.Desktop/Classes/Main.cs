@@ -1,28 +1,15 @@
-﻿using System;
+﻿using FaxLib.Input.WPF;
+using Newtonsoft.Json;
+using Streamer.Net.SoundCloud;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FaxLib;
+using System.Diagnostics;
+using System.IO;
+using System.Net;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.IO;
-
-using System.Runtime.Serialization.Json;
-using System.Windows.Media.Imaging;
-using Newtonsoft.Json;
 using System.Windows.Media;
-
-using Streamer.Net.SoundCloud;
-using Un4seen.Bass;
-
-using FaxLib.Input.WPF;
-using FaxLib.Input;
-using System.Net;
-using System.Diagnostics;
-using Newtonsoft.Json.Linq;
-using System.Windows.Threading;
 
 namespace SoundCloud.Desktop {
     public static class Shortcuts {
@@ -154,83 +141,74 @@ namespace SoundCloud.Desktop {
     }
 
     public class AppSettings {
-        const string settingJsonPath = "settings.json";
-
-        public static Dictionary<string, object> Settings { get; set; }
+        const string settingJsonPath = "playlists.json";
+        // Version of the application
+        const string version = "1.0.0";
         public static List<Playlist> Playlists { get; set; }
 
         // Saves settings
         public static void Save() {
-            var json = new Dictionary<string, object>();
-            json.Add("settings", Settings);
-            json.Add("playlists", Playlists);
-            File.WriteAllText(settingJsonPath, JsonConvert.SerializeObject(json, Formatting.Indented));
+            File.WriteAllText(settingJsonPath, JsonConvert.SerializeObject(Playlists, Formatting.Indented));
+            Properties.Settings.Default.Save();
         }
         // Loads settings
         public static void Load() {
+            // Event for auto saving settings
+            Properties.Settings.Default.PropertyChanged += (sender, e) => { Properties.Settings.Default.Save(); };
+
+            // Check if the config is upgraded
+            if(!Properties.Settings.Default.Upgraded) {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.Upgraded = true;
+            }
+
             // Check for file if not initialize everything
             if(!File.Exists(settingJsonPath)) {
-                Settings = new Dictionary<string, object>();
                 Playlists = new List<Playlist>();
                 return;
             }
 
-            // Load json file for all information
-            var json = JsonConvert.DeserializeObject<Dictionary<string, object>>(File.ReadAllText(settingJsonPath));
-
-            Settings = (json["settings"] as JObject).ToObject<Dictionary<string, object>>();
-            if(Settings == null)
-                Settings = new Dictionary<string, object>();
-
-            //Playlists = (json["playlists"] as JObject).ToObject<List<Playlist>>();
-            Playlists = json["playlists"] as List<Playlist>;
-            if(Playlists == null)
-                Playlists = new List<Playlist>();
+            // Load Playlists
+            Playlists = JsonConvert.DeserializeObject<List<Playlist>>(File.ReadAllText(settingJsonPath)) ?? new List<Playlist>();
 
             // Set audio device from settings
-            if(Settings.ContainsKey("device")) {
-                var device = (string)Settings["device"];
-                var list = Player.AvailableDevices;
-                for(int i = 1; i < list.Count; i++) {
-                    if(list[i].id == device)
-                        Player.SetAudioDevice(i);
-                }
+            var device = Properties.Settings.Default.Device;
+            var list = Player.AvailableDevices;
+            for(int i = 1; i < list.Count; i++) {
+                if(list[i].id == device)
+                    Player.SetAudioDevice(i);
             }
         }
 
-        const string version = "1.0 Stable";
-        // Cheks for updates and prompts the user to update
-        static Task _uTask;
+        // Checks for updates and prompts the user to update
         public static void CheckUpdate() {
-            if(_uTask != null)
-                return;
-
-            _uTask = Task.Factory.StartNew(() => {
-                var latest = new WebClient().DownloadString(new Uri("http://scdesktop.us.to/version/latest?v=stable"));
-                var current = int.Parse(version.Substring(0, version.IndexOf(" ") - 1).Replace(".", ""));
-
-                Dispatcher.CurrentDispatcher.Invoke(() => { 
-                    if(current < int.Parse(latest.Replace(".", "")))
-                        MessageBox.Show("No new Update found please continue to enjoy the application", "No update found", MessageBoxButton.OK);
-                    else {
-                        var res = MessageBox.Show("A new update was found. Do you want to update now? This will close the application.", "New update found", MessageBoxButton.YesNo);
-                        if(res == MessageBoxResult.Yes)
-                            Update();
-                    }
-                    _uTask = null;
-                });
-            });
+            try {
+                var latest = new WebClient().DownloadString(new Uri("http://scdesktop.us.to/api/versions.php?v=stable"));
+                var current = int.Parse(version.Replace(".", ""));
+                if(current < int.Parse(latest.Replace(".", ""))) {
+                    var res = MessageBox.Show("A new update was found. Do you want to update now? This will close the application.", "New update found", MessageBoxButton.YesNo);
+                    if(res == MessageBoxResult.Yes)
+                        Update(latest);
+                }
+                else
+                    MessageBox.Show("No new Update found please continue to enjoy the application", "No update found", MessageBoxButton.OK);
+            }
+            catch(Exception ex) {
+                MessageBox.Show("Error checking for updates. Error: " + ex.Message, "error checking for updates", MessageBoxButton.OK);
+            }
         }
+
         // Update the application
-        public static void Update() {
+        public static void Update(string version) {
             var wc = new WebClient();
             wc.DownloadFileCompleted += (o, args) => {
                 if(!File.Exists("install.exe"))
                     throw new Exception("Unable to update. Intaller not found!");
-                Process.Start("install.exe", "-update");
+                // Self extracting archive 7Zip SFX
+                Process.Start("install.exe", "-y -gm2 -sd1");
                 Environment.Exit(0);
             };
-            wc.DownloadFileAsync(new Uri("http://scdesktop.us.to/api/latest.php?v=stable"), "install.exe");
+            wc.DownloadFileAsync(new Uri("http://scdesktop.us.to/api/download.php?v=" + version), "install.exe");
         }
     }
 }

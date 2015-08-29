@@ -5,21 +5,10 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Interop;
-
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Threading.Tasks;
 
 using Streamer.Net.SoundCloud;
-using FaxLib;
 using Un4seen.Bass;
-using Un4seen.Bass.Misc;
-using Newtonsoft.Json;
-using System.Windows.Threading;
-using System.Diagnostics;
-using System.Threading;
 
 namespace SoundCloud.Desktop {
     public static class Player {

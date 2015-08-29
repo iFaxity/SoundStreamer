@@ -24,51 +24,60 @@ namespace SoundCloud.Desktop {
     [System.Diagnostics.DebuggerStepThrough]
     public partial class Spectrum : UserControl {
         #region Dependencies
+        /// <summary>
+        /// Gets/Sets the inividual Bar Width
+        /// </summary>
         public int BarWidth {
             get { return (int)GetValue(BarWidthProperty); }
             set { SetValue(BarWidthProperty, value); UpdateBars(BarCount, value, this); }
         }
         public static readonly DependencyProperty BarWidthProperty = DependencyProperty.Register("BarWidth", typeof(int), typeof(Spectrum), new FrameworkPropertyMetadata(10, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(BarWidthChanged)));
-        private static void BarWidthChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
-            var source = sender as Spectrum;
-
+        static void BarWidthChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
+            var source = (Spectrum)sender;
             UpdateBars(source.BarCount, (int)e.NewValue, source);
         }
 
+        /// <summary>
+        /// Gets/Sets the amount of Bars in the Spectrum
+        /// </summary>
         public int BarCount {
             get { return (int)GetValue(BarCountProperty); }
             set { SetValue(BarCountProperty, value); UpdateBars(value, BarWidth, this); }
         }
         public static readonly DependencyProperty BarCountProperty = DependencyProperty.Register("BarCount", typeof(int), typeof(Spectrum), new FrameworkPropertyMetadata(16, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(BarCountChanged)));
-        private static void BarCountChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
-            var source = sender as Spectrum;
-
+        static void BarCountChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
+            var source = (Spectrum)sender;
             UpdateBars((int)e.NewValue, source.BarWidth, source);
         }
 
+        /// <summary>
+        /// Gets/Sets the Brush of all bars
+        /// </summary>
         public Brush BarForeground {
             get { return (Brush)GetValue(BarForegroundProperty); }
             set { SetValue(BarForegroundProperty, value); }
         }
         public static readonly DependencyProperty BarForegroundProperty = DependencyProperty.Register("BarForeground", typeof(Brush), typeof(Spectrum), new FrameworkPropertyMetadata(new BrushConverter().ConvertFromString("#FFFF4800"), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(BarForegroundChanged)));
-        private static void BarForegroundChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
-            var source = sender as Spectrum;
-
-            source.panel.Background = (Brush)e.NewValue;
+        static void BarForegroundChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
+            ((Spectrum)sender).spectrum.Background = (Brush)e.NewValue;
         }
 
+        /// <summary>
+        /// Gets/Sets the Brush of the Background
+        /// </summary>
         public Brush BarBackground {
             get { return (Brush)GetValue(BarBackgroundProperty); }
             set { SetValue(BarBackgroundProperty, value); }
         }
         public static readonly DependencyProperty BarBackgroundProperty = DependencyProperty.Register("BarBackground", typeof(Brush), typeof(Spectrum), new FrameworkPropertyMetadata(new BrushConverter().ConvertFromString("#FFBCBCBC"), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(BarBackgroundChanged)));
-        private static void BarBackgroundChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
-            var source = sender as Spectrum;
-            foreach(Rectangle bar in source.panel.Children) bar.Fill = (Brush)e.NewValue;
+        static void BarBackgroundChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
+            foreach(Rectangle bar in ((Spectrum)sender).spectrum.Children)
+                bar.Fill = (Brush)e.NewValue;
         }
 
-        private static void UpdateBars(int count, int width, Spectrum source) {
-            source.panel.Children.Clear();
+        // Called everytime something needs to be updated
+        static void UpdateBars(int count, int width, Spectrum source) {
+            source.spectrum.Children.Clear();
             source.Width = count * width;
 
             for(int i = 0; i < count; i++) {
@@ -76,97 +85,93 @@ namespace SoundCloud.Desktop {
                     Fill = source.BarBackground,
                     Width = width,
                     Height = source.ActualHeight,
-                    VerticalAlignment = System.Windows.VerticalAlignment.Top
+                    VerticalAlignment = VerticalAlignment.Top
                 };
-                source.panel.Children.Add(bar);
+                source.spectrum.Children.Add(bar);
             }
         }
         #endregion
 
-        float[] data = new float[4096]; //Must be half of BASSData on GetData()
-
+        // Must be half of BASSData on GetData()
+        float[] data = new float[4096];
+        /// <summary>
+        /// Constructs a new Audio Spectrum
+        /// </summary>
         public Spectrum() {
             InitializeComponent();
 
             Loaded += (sender, e) => {
                 grid.Background = BarForeground;
-                foreach(Rectangle bar in panel.Children) {
+                foreach(Rectangle bar in spectrum.Children) {
                     bar.Height = Height;
                     bar.Fill = BarBackground;
                 }
                 Start();
             };
             // Update bars when size changes
-            SizeChanged += (sender, e) => {
-                UpdateBars(BarCount, BarWidth, this);
-            };
+            SizeChanged += (sender, e) => UpdateBars(BarCount, BarWidth, this);
         }
         // Start the spectrum
         void Start() {
+            // Initialize Variables
             var count = BarCount;
-            var fft = new int[count];
-            var spectrum = panel;
+            var FFT = new int[count];
 
-            Task.Factory.StartNew(async () => {
+            // Run Spectrum outside the UI thread
+            Task.Factory.StartNew(async() => {
                 while(true) {
                     try {
+                        // Check if bars should be updated
                         Dispatcher.Invoke(() => {
                             if(!IsEnabled || !IsVisible)
                                 return;
-
                             if(count != BarCount) {
                                 count = BarCount;
-                                fft = new int[count];
+                                FFT = new int[count];
                             }
                         });
-                        // Check if the player is active
-                        if(Player.channel == -1) {
-                            await Task.Delay(100);
-                            continue;
-                        }
-
-                        var active = true;
+                        // Check if Player is Active
+                        /*var active = true;
                         if(Player.State == BASSActive.BASS_ACTIVE_PLAYING)
-                            fft = GetFFT(count);
+                            FFT = GetFFT(count);
                         else
-                            active = false;
+                            active = false;*/
+                        if(Player.State == BASSActive.BASS_ACTIVE_PLAYING) {
+                            FFT = GetFFT(count);
+                            Dispatcher.Invoke(() => {
+                                for(int i = 0; i < FFT.Length; i++) {
+                                    var rect = (Rectangle)spectrum.Children[i];
+                                    /*if(!active && FFT[i] < 0) {
+                                        rect.Height = 0;
+                                        continue;
+                                    }
+                                    else if(!active)
+                                        FFT[i] = (int)(FFT[i] - (ActualHeight / 5));*/
 
-                        Dispatcher.Invoke(() => {
-                            for(int i = 0; i < fft.Length; i++) {
-                                var rect = panel.Children[i] as Rectangle;
+                                    // If FFT is below zero then make it 0
+                                    if(FFT[i] < 0)
+                                        FFT[i] = 0;
 
-                                if(!active && fft[i] < 0) {
-                                    rect.Height = 0;
-                                    continue;
+                                    rect.Height = FFT[i] < 0 ? 0 : Height - (Height / 255) * FFT[i];
                                 }
-                                else if(!active)
-                                    fft[i] = (int)(fft[i] - (ActualHeight / 5));
-                                // If FFT is below zero then make it 0
-                                if(fft[i] < 0)
-                                    fft[i] = 0;
-
-                                rect.Height = fft[i] < 0 ? 0 : Height - (Height / 255) * fft[i];
-                            }
-                        });
+                            });
+                        }
                         // ~60 fps lock
                         await Task.Delay(1000 / 60);
                     }
-                    catch {
-                        continue;
-                    }
+                    catch { }
                 }
             });
         }
-        // Gets FFT From raw data
+
+        // Calculates FFT (the peak between frequencies)
         int[] GetFFT(int count) {
-            int ret = Bass.BASS_ChannelGetData(Player.channel, data, (int)BASSData.BASS_DATA_FFT8192); //get channel fft data
+            int ret = Bass.BASS_ChannelGetData(Player.channel, data, (int)BASSData.BASS_DATA_FFT8192); //get channel FFT data
             if(ret < -1)
                 return new int[0];
-
-            int x, y;
-            int b0 = 0;
-
-            var fft = new int[count];
+            // Declare variables
+            int x, y, b0 = 0;
+            var FFT = new int[count];
 
             //Dont Touch the for iteration
             for(x = 0; x < count; x++)//computes the spectrum data, the code is taken from a bass_wasapi sample.
@@ -182,15 +187,9 @@ namespace SoundCloud.Desktop {
                         peak = data[1 + b0];
                 }
                 y = (int)(Math.Sqrt(peak) * 3 * 255 - 4);
-                if(y > 255)
-                    y = 255;
-                if(y < 0)
-                    y = 0;
-
-                fft[x] = y;
+                FFT[x] = y > 255 ? 255 : y < 0 ? 0 : y;
             }
-
-            return fft;
+            return FFT;
         }
     }
 }

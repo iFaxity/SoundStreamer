@@ -3,7 +3,6 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Un4seen.Bass;
@@ -33,11 +32,8 @@ namespace SoundCloud.Desktop {
             Player.Init(new System.Windows.Interop.WindowInteropHelper(this).Handle);
             AppSettings.Load();
             // Update check
-            if(AppSettings.Settings.ContainsKey("autoUpdate") && (bool)AppSettings.Settings["autoUpdate"] && !AppSettings.IsUpdated()) {
-                var res = MessageBox.Show("Do you want to update to a newer version?", "New update detected!", MessageBoxButton.YesNo);
-                if(res == MessageBoxResult.Yes)
-                    AppSettings.Update();
-            }
+            if(Properties.Settings.Default.AutoUpdate)
+                AppSettings.CheckUpdate();
 
             InitializeComponent();
 
@@ -101,7 +97,7 @@ namespace SoundCloud.Desktop {
             }
 
             // Initialise Shortcut Keys
-            if(!AppSettings.Settings.ContainsKey("hotkeysEnabled") || (bool)AppSettings.Settings["hotkeysEnabled"])
+            if(Properties.Settings.Default.HotkeysEnabled)
                 Shortcuts.Init(this);
 
             // Navigate to login page

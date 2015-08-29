@@ -6,6 +6,6 @@
              mc:Ignorable="d"
              VerticalAlignment="Top" HorizontalAlignment="Left" Height="100" Background="{x:Null}" Foreground="{x:Null}" BorderBrush="Black" BorderThickness="1" IsHitTestVisible="False">
     <Grid x:Name="grid" ShowGridLines="True">
-        <StackPanel x:Name="panel" Background="{x:Null}" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+        <StackPanel x:Name="spectrum" Background="{x:Null}" Orientation="Horizontal" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
     </Grid>
 </UserControl>
