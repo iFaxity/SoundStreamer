@@ -10,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace SoundCloud.Desktop {
     public static class Shortcuts {
@@ -140,6 +141,7 @@ namespace SoundCloud.Desktop {
         }
     }
 
+    // Handles Updates & Settings
     public class AppSettings {
         const string settingJsonPath = "playlists.json";
         // Version of the application
@@ -198,7 +200,7 @@ namespace SoundCloud.Desktop {
             }
         }
 
-        // Update the application
+        // Force Update the application
         public static void Update(string version) {
             var wc = new WebClient();
             wc.DownloadFileCompleted += (o, args) => {
@@ -209,6 +211,17 @@ namespace SoundCloud.Desktop {
                 Environment.Exit(0);
             };
             wc.DownloadFileAsync(new Uri("http://scdesktop.us.to/api/download.php?v=" + version), "install.exe");
+        }
+    }
+
+    // Extension Methods
+    public static class Extensions {
+        /// <summary>
+        /// Formats into the closest format
+        /// </summary>
+        /// <param name="time">TimeSpan to format</param>
+        public static string ToTime(this TimeSpan time) {
+            return time.ToString(time.Hours > 0 ? @"hh\:mm\:ss" : @"mm\:ss");
         }
     }
 }

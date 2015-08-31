@@ -131,22 +131,22 @@ namespace SoundCloud.Desktop {
                             }
                         });
                         // Check if Player is Active
-                        /*var active = true;
+                        var active = true;
                         if(Player.State == BASSActive.BASS_ACTIVE_PLAYING)
                             FFT = GetFFT(count);
                         else
-                            active = false;*/
-                        if(Player.State == BASSActive.BASS_ACTIVE_PLAYING) {
+                            active = false;
+                        //if(Player.State == BASSActive.BASS_ACTIVE_PLAYING) {
                             FFT = GetFFT(count);
                             Dispatcher.Invoke(() => {
                                 for(int i = 0; i < FFT.Length; i++) {
                                     var rect = (Rectangle)spectrum.Children[i];
-                                    /*if(!active && FFT[i] < 0) {
+                                    if(!active && FFT[i] < 0) {
                                         rect.Height = 0;
                                         continue;
                                     }
                                     else if(!active)
-                                        FFT[i] = (int)(FFT[i] - (ActualHeight / 5));*/
+                                        FFT[i] = (int)(FFT[i] - (ActualHeight / 5));
 
                                     // If FFT is below zero then make it 0
                                     if(FFT[i] < 0)
@@ -155,7 +155,7 @@ namespace SoundCloud.Desktop {
                                     rect.Height = FFT[i] < 0 ? 0 : Height - (Height / 255) * FFT[i];
                                 }
                             });
-                        }
+                        //}
                         // ~60 fps lock
                         await Task.Delay(1000 / 60);
                     }

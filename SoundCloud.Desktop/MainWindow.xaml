@@ -23,12 +23,11 @@
         </Grid>
 
         <!-- LeftPanel -->
-        <Grid Background="#FF222222" Width="200" HorizontalAlignment="Left">
+        <Grid Background="#FF222222" Width="200" Margin="0,0,0,35" HorizontalAlignment="Left">
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
                 <RowDefinition Height="200"/>
                 <RowDefinition/>
-                <RowDefinition Height="35"/>
             </Grid.RowDefinitions>
             <!-- UserInfo -->
             <Grid Grid.Row="0">
@@ -46,7 +45,7 @@
                     <TextBlock Foreground="#FFB7B7B7" FontSize="20">Likes</TextBlock>
                     <TextBlock Foreground="#FFB7B7B7" FontSize="20">My Tracks</TextBlock>
                     <TextBlock Foreground="#FFB7B7B7" FontSize="20">Settings</TextBlock>
-                    <TextBlock Foreground="#FFB7B7B7" FontSize="20">Local</TextBlock>
+                    <TextBlock Foreground="#FFB7B7B7" FontSize="20" Visibility="Hidden">Following</TextBlock>
                 </StackPanel>
             </Grid>
 
@@ -60,7 +59,7 @@
         </Grid>
 
         <!-- Content Frame -->
-        <Frame x:Name="contentFrame" Background="White" Margin="200,34,0,35" Panel.ZIndex="-1" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+        <Frame x:Name="contentFrame" Background="White" Margin="205,34,-5,35" Panel.ZIndex="-1" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
 
         <!-- Wigdet Grid -->
         <Grid x:Name="widgets" Panel.ZIndex="1">

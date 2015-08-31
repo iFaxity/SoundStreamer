@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Threading.Tasks;
 
@@ -27,11 +25,17 @@ namespace SoundCloud.Desktop {
         #endregion
 
         #region Properties
+        /// <summary>
+        /// The index of the active track
+        /// </summary>
         public static int TrackIndex { get; set; }
+        /// <summary>
+        /// List of all queued tracks
+        /// </summary>
         public static List<int> Tracks { get; set; }
         public static float Volume {
             get {
-                float vol = 0f;
+                var vol = 0f;
                 Bass.BASS_ChannelGetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, ref vol);
                 return vol;
             }
@@ -39,6 +43,27 @@ namespace SoundCloud.Desktop {
                 Bass.BASS_ChannelSetAttribute(channel, BASSAttribute.BASS_ATTRIB_VOL, value);
             }
         }
+        /// <summary>
+        /// Gets the state of the Player
+        /// </summary>
+        public static BASSActive State {
+            get {
+                return Bass.BASS_ChannelIsActive(channel);
+            }
+        }
+
+        static int _deviceIndex = 0;
+        /// <summary>
+        /// Sets the current audio device
+        /// </summary>
+        /// <param name="index">Audio device index</param>
+        public static bool SetAudioDevice(int index) {
+            _deviceIndex = index;
+            return Bass.BASS_ChannelSetDevice(channel, index);
+        }
+        /// <summary>
+        /// Get the active audio device
+        /// </summary>
         public static BASS_DEVICEINFO AudioDevice {
             get {
                 if(channel == -1)
@@ -46,17 +71,9 @@ namespace SoundCloud.Desktop {
                 return AvailableDevices[Bass.BASS_ChannelGetDevice(channel)];
             }
         }
-        static int _deviceIndex = 0;
-        public static bool SetAudioDevice(int index) {
-            _deviceIndex = index;
-            return Bass.BASS_ChannelSetDevice(channel, index);
-        }
-        public static BASSActive State {
-            get {
-                return Bass.BASS_ChannelIsActive(channel);
-            }
-        }
-
+        /// <summary>
+        /// List of all available audio devices
+        /// </summary>
         public static List<BASS_DEVICEINFO> AvailableDevices {
             get {
                 List<BASS_DEVICEINFO> list = new List<BASS_DEVICEINFO>();
@@ -73,26 +90,38 @@ namespace SoundCloud.Desktop {
 
         #region Public Methods
         public static void Init(IntPtr handle = default(IntPtr)) {
-            var path = Utils.Is64Bit ? @"Bass\x64" : @"Bass\x86";
-
-            // Load Bass (xCompatible)
+            // Load Bass
             BassNet.Registration("izze96@gmail.com", "2X29392616152222");
-            Bass.LoadMe(path);
+            Bass.LoadMe(Utils.Is64Bit ? @"Bass\x64" : @"Bass\x86");
 
             _handle = handle;
-            Volume = 1f; // Set the volume to max
-            //return Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, handle);
-
+            Volume = 1f;
+            // Init all devices
             for(int i = 1; i < AvailableDevices.Count; i++)
-                if(!Bass.BASS_Init(i, 44100, BASSInit.BASS_DEVICE_DEFAULT, handle)) new Exception("Could not initialize device: " + AvailableDevices[i].id + " @Index: " + i);
-
+                if(!Bass.BASS_Init(i, 44100, BASSInit.BASS_DEVICE_DEFAULT, handle))
+                    new Exception("Could not initialize device: " + AvailableDevices[i].id + " @Index: " + i);
             Bass.BASS_Init(-1, 44100, BASSInit.BASS_DEVICE_DEFAULT, handle);
         }
-
+        /// <summary>
+        /// Stops the player
+        /// </summary>
         public static bool Stop() { return Bass.BASS_ChannelStop(channel); }
+        /// <summary>
+        /// Plays/Resumes the player
+        /// </summary>
+        /// <param name="restart">Restart from the beginning</param>
         public static bool Resume(bool restart = false) { return Bass.BASS_ChannelPlay(channel, restart); }
+        /// <summary>
+        /// Pauses the player
+        /// </summary>
+        /// <returns></returns>
         public static bool Pause() { return Bass.BASS_ChannelPause(channel); }
 
+        /// <summary>
+        /// Sets the position of the player
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public static bool SetPos(double value) {
             try {
                 var sec = (value / 100) * SoundCloudClient.Collection[Tracks[TrackIndex]].Duration.TotalSeconds;
@@ -102,21 +131,48 @@ namespace SoundCloud.Desktop {
             }
             catch { return false; }
         }
+        /// <summary>
+        /// Gets the position of the player
+        /// </summary>
         public static TimeSpan GetPos() {
             var pos = Bass.BASS_ChannelGetPosition(channel, BASSMode.BASS_POS_BYTES);
             return TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(channel, pos));
         }
+        /// <summary>
+        /// Gets the total time of the current track
+        /// </summary>
         public static TimeSpan GetTotal() {
             var len = Bass.BASS_ChannelGetLength(channel, BASSMode.BASS_POS_BYTES);
             return TimeSpan.FromSeconds(Bass.BASS_ChannelBytes2Seconds(channel, len));
         }
+        /// <summary>
+        /// Gets the total buffered percentage
+        /// </summary>
         public static double GetBufferedPercent() {
-            var len = Bass.BASS_StreamGetFilePosition(Player.channel, BASSStreamFilePosition.BASS_FILEPOS_END); // file/buffer length
-            var buf = Bass.BASS_StreamGetFilePosition(Player.channel, BASSStreamFilePosition.BASS_FILEPOS_BUFFER); // buffer level
+            var len = Bass.BASS_StreamGetFilePosition(channel, BASSStreamFilePosition.BASS_FILEPOS_END); // file/buffer length
+            var buf = Bass.BASS_StreamGetFilePosition(channel, BASSStreamFilePosition.BASS_FILEPOS_BUFFER); // buffer level
             return buf * 100.0d / len; // percentage of buffer filled
+        }
+
+        /// <summary>
+        /// Shuffles the queued tracks
+        /// </summary>
+        public static void Shuffle() {
+            Random rnd = new Random();
+            for(int i = Tracks.Count; i > 0; i--) {
+                int n = rnd.Next(i);
+
+                var value = Tracks[n];
+                Tracks[n] = Tracks[i];
+                Tracks[i] = value;
+            }
         }
         #endregion
 
+        /// <summary>
+        /// Plays track from queue index
+        /// </summary>
+        /// <param name="index">Track index</param>
         public static void Play(int index) {
             if(index < 0)
                 TrackIndex = Tracks.Count - 1;
@@ -129,6 +185,10 @@ namespace SoundCloud.Desktop {
         }
 
         static Task _task;
+        /// <summary>
+        /// Plays a track from a track ID
+        /// </summary>
+        /// <param name="trackId">ID of the track</param>
         public static void PlayTrack(int trackId) {
             if(_task != null)
                 return;

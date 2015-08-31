@@ -1,25 +1,15 @@
-﻿//using FaxLib;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using Streamer.Net.SoundCloud;
 using Streamer.Net;
 using FaxLib;
-using System.Threading;
+using System.Windows.Input;
 
 namespace SoundCloud.Desktop {
     /// <summary>
@@ -37,15 +27,12 @@ namespace SoundCloud.Desktop {
             InitializeComponent();
             window = main;
 
-            if(File.Exists(path)) {
+            if(Properties.Settings.Default.Username != null && Properties.Settings.Default.Password != null) {
                 Task.Factory.StartNew(() => {
                     try {
-                        var log = JsonConvert.DeserializeObject<Login>(Crypt.DecryptFile(path, cryptor));
-
-                        log.SetClientInfo(clientID, clientSecret);
-
                         UICore.ToggleSpinner(grid);
-                        SoundCloudClient.Connect(log);
+                        
+                        SoundCloudClient.Connect(new Login(Crypt.Decrypt(Properties.Settings.Default.Username, cryptor), Crypt.Decrypt(Properties.Settings.Default.Password, cryptor), clientID, clientSecret));
 
                         if(SoundCloudClient.IsConnected)
                             Dispatcher.Invoke(() => NavigateWindow(window));
@@ -71,8 +58,10 @@ namespace SoundCloud.Desktop {
                 return;
             }
             // Save login to file if enabled
-            else if(save.HasValue && save.Value)
-                Crypt.EncryptFile(path, JsonConvert.SerializeObject(log, Formatting.Indented), cryptor);
+            else if(save.HasValue && save.Value) {
+                Properties.Settings.Default.Username = Crypt.Encrypt(log.User, cryptor);
+                Properties.Settings.Default.Password = Crypt.Encrypt(log.Pass, cryptor);
+            }
             // Navigate to next window
             NavigateWindow(window);
             UICore.ToggleSpinner(grid);
@@ -80,12 +69,7 @@ namespace SoundCloud.Desktop {
 
         void NavigateWindow(MainWindow window) {
             //Fetch Avatar Image
-            BitmapImage avatar = new BitmapImage();
-            avatar.BeginInit();
-            avatar.UriSource = new Uri(Me.AvatarUrl, UriKind.Absolute);
-            avatar.EndInit();
-            //Set Avatar image and name
-            window.meImg.Source = avatar;
+            window.meImg.Source = new BitmapImage(new Uri(Me.AvatarUrl, UriKind.Absolute));
             window.meName.Text = Me.Fullname;
 
             // Load all playlists 
@@ -100,9 +84,9 @@ namespace SoundCloud.Desktop {
                                 FontSize = 15,
                                 Text = playlist.Title
                             };
-                            txb.MouseDown += (sender, e) => window.contentFrame.Navigate(new PlaylistFrame(playlist));
-                            txb.MouseEnter += (sender, e) => window.Menu_Enter(sender, e);
-                            txb.MouseLeave += (sender, e) => window.Menu_Leave(sender, e);
+                            txb.MouseDown += (sender, e) => window.contentFrame.Navigate(new PlaylistPage(playlist));
+                            txb.MouseEnter += window.Menu_Enter;
+                            txb.MouseLeave += window.Menu_Leave;
                             // Add playlist to menu
                             window.playlists.Children.Add(txb);
                         });
@@ -112,8 +96,7 @@ namespace SoundCloud.Desktop {
             });
 
             // Go to the dashboard/stream
-            window.streamFrame = new StreamFrame();
-            window.contentFrame.Navigate(window.streamFrame);
+            window.contentFrame.Navigate(window.streamPage = new StreamPage());
         }
 
         private void offline_Click(object sender, RoutedEventArgs e) {
