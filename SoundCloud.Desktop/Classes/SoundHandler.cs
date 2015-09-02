@@ -158,7 +158,7 @@ namespace SoundCloud.Desktop {
         /// Shuffles the queued tracks
         /// </summary>
         public static void Shuffle() {
-            Random rnd = new Random();
+            var rnd = new Random();
             for(int i = Tracks.Count; i > 0; i--) {
                 int n = rnd.Next(i);
 

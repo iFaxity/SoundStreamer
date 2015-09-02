@@ -192,8 +192,6 @@ namespace SoundCloud.Desktop {
                     if(res == MessageBoxResult.Yes)
                         Update(latest);
                 }
-                else
-                    MessageBox.Show("No new Update found please continue to enjoy the application", "No update found", MessageBoxButton.OK);
             }
             catch(Exception ex) {
                 MessageBox.Show("Error checking for updates. Error: " + ex.Message, "error checking for updates", MessageBoxButton.OK);
