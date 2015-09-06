@@ -14,22 +14,25 @@ namespace SoundCloud.Desktop {
             var list = Player.AvailableDevices;
             for(int i = 1; i < list.Count; i++) {
                 cmbAudioDevice.Items.Add(list[i].name.Contains("(") ? list[i].name.Substring(0, list[i].name.IndexOf("(")) : list[i].name);
-                if(list[i].id == Properties.Settings.Default.Device)
+                if(list[i].id == AppSettings.Settings.GetValue<string>("Device"))
                     cmbAudioDevice.SelectedIndex = i;
             }
 
             // Audio Device Combo Box
             cmbAudioDevice.SelectionChanged += cmbAudioDevice_SelectionChanged;
             // Clear login
-            btnClearLogin.Click += (sender, e) => System.IO.File.Delete("login.json");
+            btnClearLogin.Click += (sender, e) => {
+                AppSettings.Settings.Reset("Username");
+                AppSettings.Settings.Reset("Password");
+            };
 
             // Hotkeys Toggle
-            cbxAutoUpdate.IsChecked = Properties.Settings.Default.AutoUpdate;
+            cbxAutoUpdate.IsChecked = AppSettings.Settings.GetValue<bool>("AutoUpdate");
             cbxAutoUpdate.Checked += cbxAutoUpdate_Changed;
             cbxAutoUpdate.Unchecked += cbxAutoUpdate_Changed;
 
             // Hotkeys Toggle
-            cbxHotkeys.IsChecked = Properties.Settings.Default.HotkeysEnabled;
+            cbxHotkeys.IsChecked = AppSettings.Settings.GetValue<bool>("HotkeysEnabled");
             cbxHotkeys.Checked += cbxHotkeys_Changed;
             cbxHotkeys.Unchecked += cbxHotkeys_Changed;
         }
@@ -38,16 +41,16 @@ namespace SoundCloud.Desktop {
             Player.SetAudioDevice(cmbAudioDevice.SelectedIndex);
             var id = Player.AvailableDevices[cmbAudioDevice.SelectedIndex].id;
             if(id != null)
-                Properties.Settings.Default.Device = id;
+                AppSettings.Settings.SetValue("Device", id);
         }
 
         void cbxAutoUpdate_Changed(object sender, RoutedEventArgs e) {
             if(cbxAutoUpdate.IsChecked.HasValue)
-                Properties.Settings.Default.AutoUpdate = cbxAutoUpdate.IsChecked.Value;
+                AppSettings.Settings.SetValue("AutoUpdate", cbxAutoUpdate.IsChecked.Value);
         }
         void cbxHotkeys_Changed(object sender, RoutedEventArgs e) {
             if(cbxHotkeys.IsChecked.HasValue)
-                Properties.Settings.Default.HotkeysEnabled = cbxHotkeys.IsChecked.Value;
+                AppSettings.Settings.SetValue("HotkeysEnabled", cbxHotkeys.IsChecked.Value);
         }
         void btnCheckUpdate_Click(object sender, RoutedEventArgs e) { AppSettings.CheckUpdate(); }
 

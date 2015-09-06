@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Streamer.Net {
     internal enum HttpRequestMethod { GET, PUT, POST, DELETE }
-    [System.Diagnostics.DebuggerStepThrough]
+    //[System.Diagnostics.DebuggerStepThrough]
     public class Login {
         public string User { get; private set; }
         public string Pass { get; private set; }

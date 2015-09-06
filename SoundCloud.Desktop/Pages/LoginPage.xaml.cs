@@ -9,7 +9,6 @@ using System.Windows.Media.Imaging;
 using Streamer.Net.SoundCloud;
 using Streamer.Net;
 using FaxLib;
-using System.Windows.Input;
 
 namespace SoundCloud.Desktop {
     /// <summary>
@@ -27,12 +26,15 @@ namespace SoundCloud.Desktop {
             InitializeComponent();
             window = main;
 
-            if(Properties.Settings.Default.Username != null && Properties.Settings.Default.Password != null) {
+            if(AppSettings.Settings.GetValue<string>("Username") != "" && AppSettings.Settings.GetValue<string>("Password") != "") {
                 Task.Factory.StartNew(() => {
                     try {
                         UICore.ToggleSpinner(grid);
-                        
-                        SoundCloudClient.Connect(new Login(Crypt.Decrypt(Properties.Settings.Default.Username, cryptor), Crypt.Decrypt(Properties.Settings.Default.Password, cryptor), clientID, clientSecret));
+
+                        string user = Crypt.Decrypt(AppSettings.Settings.GetValue<string>("Username"), cryptor),
+                        pass = Crypt.Decrypt(AppSettings.Settings.GetValue<string>("Password"), cryptor);
+
+                        SoundCloudClient.Connect(new Login(user, pass, clientID, clientSecret));
 
                         if(SoundCloudClient.IsConnected)
                             Dispatcher.Invoke(() => NavigateWindow(window));
@@ -59,8 +61,8 @@ namespace SoundCloud.Desktop {
             }
             // Save login to file if enabled
             else if(save.HasValue && save.Value) {
-                Properties.Settings.Default.Username = Crypt.Encrypt(log.User, cryptor);
-                Properties.Settings.Default.Password = Crypt.Encrypt(log.Pass, cryptor);
+                AppSettings.Settings.SetValue("Username", Crypt.Encrypt(log.User, cryptor));
+                AppSettings.Settings.SetValue("Password", Crypt.Encrypt(log.Pass, cryptor));
             }
             // Navigate to next window
             NavigateWindow(window);

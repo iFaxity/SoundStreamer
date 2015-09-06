@@ -1,0 +1,22 @@
+﻿{
+  "Device": {
+    "value": "",
+    "default": ""
+  },
+  "HotkeysEnabled": {
+    "value": false,
+    "default": false
+  },
+  "AutoUpdate": {
+    "value": true,
+    "default": true
+  },
+  "Username": {
+    "value": "",
+    "default": ""
+  },
+  "Password": {
+    "value": "",
+    "default": ""
+  }
+}

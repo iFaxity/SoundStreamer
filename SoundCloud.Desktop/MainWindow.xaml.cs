@@ -31,7 +31,7 @@ namespace SoundCloud.Desktop {
             Player.Init(new System.Windows.Interop.WindowInteropHelper(this).Handle);
             AppSettings.Load();
             // Update check
-            if(Properties.Settings.Default.AutoUpdate)
+            if(AppSettings.Settings.GetValue<bool>("AutoUpdate"))
                 AppSettings.CheckUpdate();
 
             InitializeComponent();
@@ -93,7 +93,7 @@ namespace SoundCloud.Desktop {
             }
 
             // Init Shortcut Keys
-            if(Properties.Settings.Default.HotkeysEnabled)
+            if(AppSettings.Settings.GetValue<bool>("HotkeysEnabled"))
                 Shortcuts.Init(this);
 
             // Navigate to login page

@@ -1,4 +1,5 @@
-﻿using FaxLib.Input.WPF;
+﻿using FaxLib;
+using FaxLib.Input.WPF;
 using Newtonsoft.Json;
 using Streamer.Net.SoundCloud;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -143,41 +145,44 @@ namespace SoundCloud.Desktop {
 
     // Handles Updates & Settings
     public class AppSettings {
-        const string settingJsonPath = "playlists.json";
+        const string playlistsPath = "playlists.json";
+        const string settingsPath = "settings.json";
+
+        public static Settings Settings { get; set; }
         // Version of the application
         const string version = "1.0.0";
         public static List<Playlist> Playlists { get; set; }
 
         // Saves settings
         public static void Save() {
-            File.WriteAllText(settingJsonPath, JsonConvert.SerializeObject(Playlists, Formatting.Indented));
-            Properties.Settings.Default.Save();
+            File.WriteAllText(playlistsPath, JsonConvert.SerializeObject(Playlists, Formatting.Indented));
+            Settings.Save();
         }
         // Loads settings
         public static void Load() {
             // Event for auto saving settings
-            Properties.Settings.Default.PropertyChanged += (sender, e) => { Properties.Settings.Default.Save(); };
+            Settings = new Settings(settingsPath, true);
 
-            // Check if the config is upgraded
-            if(!Properties.Settings.Default.Upgraded) {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.Upgraded = true;
+            // Read default settings from resource
+            if(!Settings.Load(settingsPath)) {
+                using(Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("SoundCloud.Desktop.settings.json"))
+                using(StreamReader reader = new StreamReader(stream)) {
+                    Settings.Load(reader.ReadToEnd());
+                }
             }
 
             // Check for file if not initialize everything
-            if(!File.Exists(settingJsonPath)) {
+            if(!File.Exists(playlistsPath))
                 Playlists = new List<Playlist>();
-                return;
-            }
-
             // Load Playlists
-            Playlists = JsonConvert.DeserializeObject<List<Playlist>>(File.ReadAllText(settingJsonPath)) ?? new List<Playlist>();
+            else
+                Playlists = JsonConvert.DeserializeObject<List<Playlist>>(File.ReadAllText(playlistsPath)) ?? new List<Playlist>();
 
             // Set audio device from settings
-            var device = Properties.Settings.Default.Device;
-            var list = Player.AvailableDevices;
-            for(int i = 1; i < list.Count; i++) {
-                if(list[i].id == device)
+            var device = Settings.GetValue<string>("Device");
+            var devices = Player.AvailableDevices;
+            for(int i = 1; i < devices.Count; i++) {
+                if(devices[i].id == device)
                     Player.SetAudioDevice(i);
             }
         }

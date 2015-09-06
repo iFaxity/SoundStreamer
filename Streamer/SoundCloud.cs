@@ -85,7 +85,7 @@ namespace Streamer.Net.SoundCloud {
                 Collection = new Dictionary<int, Track>();
                 return true;
             }
-            catch(Exception ex) { return false; }
+            catch { return false; }
         }
         /// <summary>
         /// Shuffles a list of tracks
