@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SoundCloud.Desktop", "SoundCloud.Desktop\SoundCloud.Desktop.csproj", "{D37308D2-A771-42A2-9C25-4AD894E4734F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{EC0F2EA9-0C23-4D32-9D39-2EC4EA387AEF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Streamer", "Streamer\Streamer.csproj", "{F286E5AE-D398-4C13-914E-5891E84EA276}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{FC7CA375-D759-4C84-87C6-A2582D3A4E8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,14 @@ Global
 		{F286E5AE-D398-4C13-914E-5891E84EA276}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F286E5AE-D398-4C13-914E-5891E84EA276}.Release|x64.ActiveCfg = Release|x64
 		{F286E5AE-D398-4C13-914E-5891E84EA276}.Release|x64.Build.0 = Release|x64
+		{FC7CA375-D759-4C84-87C6-A2582D3A4E8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC7CA375-D759-4C84-87C6-A2582D3A4E8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC7CA375-D759-4C84-87C6-A2582D3A4E8A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FC7CA375-D759-4C84-87C6-A2582D3A4E8A}.Debug|x64.Build.0 = Debug|Any CPU
+		{FC7CA375-D759-4C84-87C6-A2582D3A4E8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC7CA375-D759-4C84-87C6-A2582D3A4E8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC7CA375-D759-4C84-87C6-A2582D3A4E8A}.Release|x64.ActiveCfg = Release|Any CPU
+		{FC7CA375-D759-4C84-87C6-A2582D3A4E8A}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
