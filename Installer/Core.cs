@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using Ionic.Zip;
+using System.Windows;
 
 namespace Installer {
     class Core {
@@ -36,6 +37,11 @@ namespace Installer {
                     stream.Close();
             }
             return false;
+        }
+
+        public static void ErrorClose(string message, string title = "An error occurred. Installer will close.", bool close = true) {
+            MessageBox.Show(message, title, MessageBoxButton.OK);
+            Environment.Exit(0);
         }
     }
 }
