@@ -204,16 +204,16 @@ namespace SoundCloud.Desktop {
         }
 
         // Force Update the application
-        public static void Update(string version) {
+        public static void Update(string version = "stable") {
             var wc = new WebClient();
             wc.DownloadFileCompleted += (o, args) => {
-                if(!File.Exists("install.exe"))
+                if(!File.Exists("installer.exe"))
                     throw new Exception("Unable to update. Intaller not found!");
-                // Self extracting archive 7Zip SFX
-                Process.Start("install.exe", "-y -gm2 -sd1");
+                // Run installer
+                Process.Start("installer.exe", "-update -version " + version);
                 Environment.Exit(0);
             };
-            wc.DownloadFileAsync(new Uri("http://scdesktop.us.to/api/download.php?v=" + version), "install.exe");
+            wc.DownloadFileAsync(new Uri("http://scdesktop.us.to/api/installer.exe"), "installer.exe");
         }
     }
 

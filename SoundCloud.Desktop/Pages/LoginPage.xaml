@@ -3,19 +3,33 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:fax="http://schemas.faxlib.com/wpf"
       mc:Ignorable="d" 
-      d:DesignHeight="200" d:DesignWidth="300"
+      d:DesignHeight="250" d:DesignWidth="300"
 	Title="LoginPage">
     <Grid x:Name="grid" Background="White">
-        <Border Background="#FFECECEC" BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center" Height="150" Width="250">
+        <Border Background="#FF2D2D30" HorizontalAlignment="Center" VerticalAlignment="Center" Height="230" Width="280" Margin="10">
             <Grid>
-                <TextBlock HorizontalAlignment="Left" Margin="10,15,0,0" TextWrapping="Wrap" Text="Username" VerticalAlignment="Top"/>
-                <TextBlock HorizontalAlignment="Left" Margin="10,60,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top"/>
+                <Grid Background="#FF1D1D1D" Height="67" VerticalAlignment="Top" HorizontalAlignment="Stretch">
+                    <fax:IcoMoon Icon="SoundCloud" Height="50" Foreground="White" Margin="10,10,0,0"></fax:IcoMoon>
+                    <TextBlock HorizontalAlignment="Left" Margin="64,21,0,0" FontSize="25" TextWrapping="Wrap" Text="SoundCloud Login" VerticalAlignment="Top" Foreground="White"/>
+                </Grid>
+                <Rectangle Height="2" Margin="0,65,0,161">
+                    <Rectangle.Fill>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FF1D1D1D" Offset="0"/>
+                            <GradientStop Color="#FF2D2D30" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Rectangle.Fill>
+                </Rectangle>
 
-                <TextBox x:Name="username" Margin="70,15,10,0" HorizontalAlignment="Stretch" Height="23" TextWrapping="Wrap" VerticalAlignment="Top"/>
-                <PasswordBox x:Name="password" Margin="70,60,10,0" HorizontalAlignment="Stretch" Height="23" VerticalAlignment="Top"/>
-                <Button x:Name="login" Content="Login" HorizontalAlignment="Right" Margin="0,0,10,30" VerticalAlignment="Bottom" Width="75" TabIndex="4" IsDefault="True" Click="login_Click"/>
-                <CheckBox x:Name="rememberMe" Content="Remember me" HorizontalAlignment="Left" Margin="10,0,0,32.5" VerticalAlignment="Bottom" ClickMode="Press"/>
+                <TextBlock HorizontalAlignment="Left" Margin="10,77,0,0" TextWrapping="Wrap" Text="Username" VerticalAlignment="Top" Foreground="White"/>
+                <TextBlock HorizontalAlignment="Left" Margin="10,126,0,0" TextWrapping="Wrap" Text="Password" VerticalAlignment="Top" Foreground="White"/>
+
+                <TextBox x:Name="username" Margin="10,98,10,0" HorizontalAlignment="Stretch" Height="23" TextWrapping="Wrap" VerticalAlignment="Top"/>
+                <PasswordBox x:Name="password" Margin="10,147,10,0" HorizontalAlignment="Stretch" Height="23" VerticalAlignment="Top"/>
+                <Button x:Name="login" Content="Login" HorizontalAlignment="Right" Margin="0,0,10,15" VerticalAlignment="Bottom" Width="75" TabIndex="4" IsDefault="True" Click="login_Click"/>
+                <CheckBox x:Name="rememberMe" Content="Remember me" HorizontalAlignment="Left" Margin="10,0,0,17" VerticalAlignment="Bottom" ClickMode="Press" Foreground="White"/>
                 <Button x:Name="offline" Content="Offline" Visibility="Hidden" HorizontalAlignment="Right" Margin="0,0,10,5" VerticalAlignment="Bottom" Width="75" TabIndex="4" Click="offline_Click"/>
             </Grid>
         </Border>
