@@ -32,7 +32,7 @@ namespace SoundCloud.Desktop {
             AppSettings.Load();
             // Update check
             if(AppSettings.Settings.GetValue<bool>("AutoUpdate"))
-                AppSettings.CheckUpdate();
+                AppSettings.CheckUpdate(false);
 
             InitializeComponent();
 

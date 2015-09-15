@@ -8,14 +8,14 @@
         Title="SoundCloud Desktop Installer" Height="211.516" Width="314.174" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="icon.ico">
     <Grid>
         <Grid x:Name="splashGrid">
-            <Button x:Name="btnStart" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Content="Install" HorizontalAlignment="Left" Margin="195.842,142.109,0,0" VerticalAlignment="Top" Width="75" IsDefault="True" BorderBrush="#FF4D4D4D" Background="#FFD1D1D1"/>
+            <Button x:Name="btnStart" Content="Install" HorizontalAlignment="Left" Margin="196,111,0,0" VerticalAlignment="Top" Width="75" IsDefault="True" BorderBrush="#FF4D4D4D" Background="#FFD1D1D1"/>
             <TextBlock HorizontalAlignment="Left" Margin="20.915,43.979,0,0" TextWrapping="Wrap" Text="SoundCloud Desktop" VerticalAlignment="Top" FontSize="26.667"/>
             <TextBlock HorizontalAlignment="Left" Margin="106.844,84.449,0,0" TextWrapping="Wrap" Text="Installer" VerticalAlignment="Top" FontSize="21.333" FontStyle="Italic" Foreground="#FF575757"/>
-            <TextBlock HorizontalAlignment="Left" Margin="10,229.08,0,0" TextWrapping="Wrap" Text="*Not affiliated with SoundCloud or any of their products." VerticalAlignment="Top" Foreground="#FF575757"/>
+            <TextBlock HorizontalAlignment="Left" Margin="10,136,0,0" TextWrapping="Wrap" Text="*Not affiliated with SoundCloud or any of their products." VerticalAlignment="Top" Foreground="#FF575757"/>
         </Grid>
         <Grid x:Name="installGrid" Visibility="Hidden">
             <ProgressBar x:Name="pbar" HorizontalAlignment="Left" Height="20.63" Margin="10,41.378,0,0" VerticalAlignment="Top" Width="274" BorderBrush="#FF8B8B8B" Value="0" Maximum="100" Minimum="0"/>
-            <Button x:Name="btnInstall" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Content="Install" HorizontalAlignment="Left" Margin="209,140.938,0,0" VerticalAlignment="Top" Width="75"  BorderBrush="#FF4D4D4D" Background="#FFD1D1D1"/>
+            <Button x:Name="btnInstall" Content="Install" HorizontalAlignment="Left" Margin="209,140.938,0,0" VerticalAlignment="Top" Width="75"  BorderBrush="#FF4D4D4D" Background="#FFD1D1D1"/>
             <TextBlock HorizontalAlignment="Left" Margin="10,20.418,0,0" TextWrapping="Wrap" Text="Progress" VerticalAlignment="Top"/>
             <CheckBox x:Name="cbxDeskIco" IsChecked="True" Content="Create Desktop Icon" HorizontalAlignment="Left" Margin="10,76.513,0,0" VerticalAlignment="Top"/>
         </Grid>

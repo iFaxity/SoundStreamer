@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -35,6 +36,8 @@ namespace SoundCloud.Desktop {
             cbxHotkeys.IsChecked = AppSettings.Settings.GetValue<bool>("HotkeysEnabled");
             cbxHotkeys.Checked += cbxHotkeys_Changed;
             cbxHotkeys.Unchecked += cbxHotkeys_Changed;
+
+            // Hotkeys Capture
         }
 
         void cmbAudioDevice_SelectionChanged(object sender, SelectionChangedEventArgs e) {

@@ -32,5 +32,27 @@
             <Run Text="Shift + PageUp: Raise volume by 5%"/><LineBreak/>
             <Run Text="Shift + PageDown: Decrease volume by 5%"/><LineBreak/>
         </TextBlock>
+        <GroupBox Header="Customise HotKeys" HorizontalAlignment="Left" Margin="445,101,0,0" VerticalAlignment="Top" Height="200" Width="333">
+            <Grid Name="hotkeys" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <ComboBox Name="cbxPlayMod" ItemsSource="{Binding ModifierKey}" HorizontalAlignment="Left" Margin="105,41,0,0" VerticalAlignment="Top" Width="95"/>
+                <ComboBox Name="cbxNextMod" HorizontalAlignment="Left" Margin="105,68,0,0" VerticalAlignment="Top" Width="95"/>
+                <ComboBox Name="cbxPrevMod" HorizontalAlignment="Left" Margin="105,95,0,0" VerticalAlignment="Top" Width="95"/>
+                <ComboBox Name="cbxVolUpMod" HorizontalAlignment="Left" Margin="105,122,0,0" VerticalAlignment="Top" Width="95"/>
+                <ComboBox Name="cbxVulDownMod" HorizontalAlignment="Left" Margin="105,149,0,0" VerticalAlignment="Top" Width="95"/>
+                <ComboBox Name="cbxPlayKey" HorizontalAlignment="Left" Margin="213,41,0,0" VerticalAlignment="Top" Width="95"/>
+                <ComboBox Name="cbxNextKey" HorizontalAlignment="Left" Margin="213,68,0,0" VerticalAlignment="Top" Width="95"/>
+                <ComboBox Name="cbxPrevKey" HorizontalAlignment="Left" Margin="213,95,0,0" VerticalAlignment="Top" Width="95"/>
+                <ComboBox Name="cbxVolUpKey" HorizontalAlignment="Left" Margin="213,122,0,0" VerticalAlignment="Top" Width="95"/>
+                <ComboBox Name="cbxVolDownKey" HorizontalAlignment="Left" Margin="213,149,0,0" VerticalAlignment="Top" Width="95"/>
+                <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="10,41,0,0" TextWrapping="Wrap" Text="Play/Resume" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="26,67,0,0" TextWrapping="Wrap" Text="Next Track" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="29,95,0,0" TextWrapping="Wrap" Text="Prev Track" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="53,121,0,0" TextWrapping="Wrap" Text="Vol Up" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="32,147,0,0" TextWrapping="Wrap" Text="Vol Down" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="105,10,0,0" TextWrapping="Wrap" Text="Modifier" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="213,10,0,0" TextWrapping="Wrap" Text="Key" VerticalAlignment="Top"/>
+                <TextBlock HorizontalAlignment="Left" FontSize="16" Margin="10,10,0,0" TextWrapping="Wrap" Text="Action" VerticalAlignment="Top"/>
+            </Grid>
+        </GroupBox>
     </Grid>
 </Page>

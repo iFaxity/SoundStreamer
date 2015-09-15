@@ -237,7 +237,6 @@ namespace SoundCloud.Desktop {
                 Directory.CreateDirectory("Tracks");
 
             wc.DownloadFileAsync(new Uri(track.StreamUrl), "Tracks\\" + track.Title + ".mp3");
-            //wc.DownloadFileCompleted += (wcS, wcE) => Process.Start("explorer.exe", Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location) + "\\Tracks");
         }
     }
 }

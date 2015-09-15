@@ -40,9 +40,12 @@ namespace SoundCloud.Desktop {
         public static void Update() {
             handler.UnregisterAll();
 
-            handler.RegisterKey(new HotKey(Key.Up, ModifierKey.Shift, actionPlay, null));
+            /*handler.RegisterKey(new HotKey(Key.Up, ModifierKey.Shift, actionPlay, null));
             handler.RegisterKey(new HotKey(Key.Right, ModifierKey.Shift, actionNext, null));
-            handler.RegisterKey(new HotKey(Key.Left, ModifierKey.Shift, actionPrev, null));
+            handler.RegisterKey(new HotKey(Key.Left, ModifierKey.Shift, actionPrev, null));*/
+            handler.RegisterKey(new HotKey(Key.MediaPlayPause, ModifierKey.Shift, actionPlay, null));
+            handler.RegisterKey(new HotKey(Key.MediaNextTrack, ModifierKey.Shift, actionNext, null));
+            handler.RegisterKey(new HotKey(Key.MediaPreviousTrack, ModifierKey.Shift, actionPrev, null));
             handler.RegisterKey(new HotKey(Key.PageUp, ModifierKey.Shift, actionVolUp, 0.05f));
             handler.RegisterKey(new HotKey(Key.PageDown, ModifierKey.Shift, actionVolDown, 0.05f));
         }
@@ -145,12 +148,13 @@ namespace SoundCloud.Desktop {
 
     // Handles Updates & Settings
     public class AppSettings {
-        const string playlistsPath = "playlists.json";
-        const string settingsPath = "settings.json";
+        static string appPath = AppDomain.CurrentDomain.BaseDirectory;
+        static string playlistsPath = appPath + @"\playlists.json";
+        static string settingsPath = appPath + @"\settings.json";
 
         public static Settings Settings { get; set; }
         // Version of the application
-        const string version = "1.0.0";
+        const string version = "1.1.0";
         public static List<Playlist> Playlists { get; set; }
 
         // Saves settings
@@ -188,9 +192,9 @@ namespace SoundCloud.Desktop {
         }
 
         // Checks for updates and prompts the user to update
-        public static void CheckUpdate() {
+        public static void CheckUpdate(bool stable = true) {
             try {
-                var latest = new WebClient().DownloadString(new Uri("http://scdesktop.us.to/api/versions.php?v=stable"));
+                var latest = new WebClient().DownloadString(new Uri("http://scdesktop.us.to/api/versions.php?v=" + (stable ? "stable" : "latest"))); //stable));
                 var current = int.Parse(version.Replace(".", ""));
                 if(current < int.Parse(latest.Replace(".", ""))) {
                     var res = MessageBox.Show("A new update was found. Do you want to update now? This will close the application.", "New update found", MessageBoxButton.YesNo);
