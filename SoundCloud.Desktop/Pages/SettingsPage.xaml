@@ -38,7 +38,7 @@
                 <ComboBox Name="cbxNextMod" HorizontalAlignment="Left" Margin="105,68,0,0" VerticalAlignment="Top" Width="95"/>
                 <ComboBox Name="cbxPrevMod" HorizontalAlignment="Left" Margin="105,95,0,0" VerticalAlignment="Top" Width="95"/>
                 <ComboBox Name="cbxVolUpMod" HorizontalAlignment="Left" Margin="105,122,0,0" VerticalAlignment="Top" Width="95"/>
-                <ComboBox Name="cbxVulDownMod" HorizontalAlignment="Left" Margin="105,149,0,0" VerticalAlignment="Top" Width="95"/>
+                <ComboBox Name="cbxVolDownMod" HorizontalAlignment="Left" Margin="105,149,0,0" VerticalAlignment="Top" Width="95"/>
                 <ComboBox Name="cbxPlayKey" HorizontalAlignment="Left" Margin="213,41,0,0" VerticalAlignment="Top" Width="95"/>
                 <ComboBox Name="cbxNextKey" HorizontalAlignment="Left" Margin="213,68,0,0" VerticalAlignment="Top" Width="95"/>
                 <ComboBox Name="cbxPrevKey" HorizontalAlignment="Left" Margin="213,95,0,0" VerticalAlignment="Top" Width="95"/>
