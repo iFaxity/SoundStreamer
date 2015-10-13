@@ -75,9 +75,9 @@ namespace SoundCloud.Desktop {
             window.meImg.Source = new BitmapImage(new Uri(Me.AvatarUrl, UriKind.Absolute));
             window.meName.Text = Me.Fullname;
 
-            // Load all playlists 
+            // Load all playlists
             Task.Factory.StartNew(() => {
-                UICore.ToggleSpinner(window.playlistGrid, 75, Colors.LightGray);
+                UICore.ToggleSpinner(window.playlistGrid, Colors.LightGray, 75);
                 for(int i = 0; i < Me.PlaylistsCount; i++) {
                     foreach(var playlist in Me.GetPlaylists(i, 1)) {
                         Dispatcher.Invoke(() => {

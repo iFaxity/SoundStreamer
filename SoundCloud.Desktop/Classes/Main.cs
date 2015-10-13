@@ -40,9 +40,6 @@ namespace SoundCloud.Desktop {
         public static void Update() {
             handler.UnregisterAll();
 
-            /*handler.RegisterKey(new HotKey(Key.Up, ModifierKey.Shift, actionPlay, null));
-            handler.RegisterKey(new HotKey(Key.Right, ModifierKey.Shift, actionNext, null));
-            handler.RegisterKey(new HotKey(Key.Left, ModifierKey.Shift, actionPrev, null));*/
             handler.RegisterKey(new HotKey(Key.MediaPlayPause, ModifierKey.Shift, actionPlay, null));
             handler.RegisterKey(new HotKey(Key.MediaNextTrack, ModifierKey.Shift, actionNext, null));
             handler.RegisterKey(new HotKey(Key.MediaPreviousTrack, ModifierKey.Shift, actionPrev, null));
@@ -57,17 +54,18 @@ namespace SoundCloud.Desktop {
         /// Toggles spinner on the grid. If it toggled on then it returns true if not it returns false.
         /// </summary>
         public static bool ToggleSpinner(Grid grid, double size = 100) {
-            return ToggleSpinner(grid, size, Colors.Gray);
+            return ToggleSpinner(grid, Colors.Gray, size);
         }
         /// <summary>
         /// Toggles spinner on the grid. If it toggled on then it returns true if not it returns false.
         /// </summary>
-        public static bool ToggleSpinner(Grid grid, double size, Color color) {
-            bool state = false;
+        public static bool ToggleSpinner(Grid grid, Color color, double size = 100) {
             grid.Dispatcher.Invoke(() => {
-                var spinner = FindChild<FaxUi.IcoMoon>(grid, "spinner");
-                if(spinner != null)
+                var spinner = grid.FindChild<FaxUi.IcoMoon>("spinner");
+                if(spinner != null) {
                     grid.Children.Remove(spinner);
+                    return true;
+                }
                 else {
                     var spin = new FaxUi.IcoMoon {
                         VerticalAlignment = VerticalAlignment.Center,
@@ -83,59 +81,11 @@ namespace SoundCloud.Desktop {
                     };
 
                     spin.Name = "spinner";
-
                     grid.Children.Add(spin);
-                    state = true;
+                    return true;
                 }
             });
-            return state;
-        }
-
-        /// <summary>
-        /// Finds a Child of a given item in the visual tree. 
-        /// </summary>
-        /// <param name="parent">A direct parent of the queried item.</param>
-        /// <typeparam name="T">The type of the queried item.</typeparam>
-        /// <param name="childName">x:Name or Name of child. </param>
-        /// <returns>The first parent item that matches the submitted type parameter. 
-        /// If not matching item can be found, 
-        /// a null parent is being returned.</returns>
-        public static T FindChild<T>(DependencyObject parent, string childName) where T : DependencyObject {
-            // Confirm parent and childName are valid. 
-            if(parent == null)
-                return null;
-
-            T foundChild = null;
-
-            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
-            for(int i = 0; i < childrenCount; i++) {
-                var child = VisualTreeHelper.GetChild(parent, i);
-                // If the child is not of the request child type child
-                T childType = child as T;
-                if(childType == null) {
-                    // recursively drill down the tree
-                    foundChild = FindChild<T>(child, childName);
-
-                    // If the child is found, break so we do not overwrite the found child. 
-                    if(foundChild != null) break;
-                }
-                else if(!string.IsNullOrEmpty(childName)) {
-                    var frameworkElement = child as FrameworkElement;
-                    // If the child's name is set for search
-                    if(frameworkElement != null && frameworkElement.Name == childName) {
-                        // if the child's name is of the request name
-                        foundChild = (T)child;
-                        break;
-                    }
-                }
-                else {
-                    // child element found.
-                    foundChild = (T)child;
-                    break;
-                }
-            }
-
-            return foundChild;
+            return false;
         }
 
         public static Brush FromHex(string hex) {
@@ -229,6 +179,53 @@ namespace SoundCloud.Desktop {
         /// <param name="time">TimeSpan to format</param>
         public static string ToTime(this TimeSpan time) {
             return time.ToString(time.Hours > 0 ? @"hh\:mm\:ss" : @"mm\:ss");
+        }
+
+        /// <summary>
+        /// Finds a Child of a given item in the visual tree. 
+        /// </summary>
+        /// <param name="parent">A direct parent of the queried item.</param>
+        /// <typeparam name="T">The type of the queried item.</typeparam>
+        /// <param name="childName">x:Name or Name of child. </param>
+        /// <returns>The first parent item that matches the submitted type parameter. 
+        /// If not matching item can be found, 
+        /// a null parent is being returned.</returns>
+        public static T FindChild<T>(this DependencyObject parent, string childName) where T : DependencyObject {
+            // Confirm parent and childName are valid. 
+            if(parent == null)
+                return null;
+            
+            T foundChild = null;
+
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for(int i = 0; i < childrenCount; i++) {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                // If the child is not of the request child type child
+                T childType = child as T;
+                if(childType == null) {
+                    // recursively drill down the tree
+                    foundChild = FindChild<T>(child, childName);
+                    // If the child is found, break so we do not overwrite the found child. 
+                    if(foundChild != null)
+                        break;
+                }
+                else if(!string.IsNullOrEmpty(childName)) {
+                    var frameworkElement = child as FrameworkElement;
+                    // If the child's name is set for search
+                    if(frameworkElement != null && frameworkElement.Name == childName) {
+                        // if the child's name is of the request name
+                        foundChild = (T)child;
+                        break;
+                    }
+                }
+                else {
+                    // child element found.
+                    foundChild = (T)child;
+                    break;
+                }
+            }
+
+            return foundChild;
         }
     }
 }

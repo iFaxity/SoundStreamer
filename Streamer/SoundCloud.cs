@@ -850,8 +850,10 @@ namespace Streamer.Net.SoundCloud {
             _dashboardHref = res.ContainsKey("next_href") ? res["next_href"] : "stop";
 
             foreach(var dict in res["collection"]) {
-                if(tracksOnly && dict["type"].Value.Contains("track"))
+                if(tracksOnly && dict["type"].Value.Contains("track")) {
                     list.Add(JsonConvert.DeserializeObject<Track>(dict["origin"].ToString()).ID);
+                    System.IO.File.AppendAllText("log.log", dict["origin"].ToString());
+                }
             }
             return list;
         }

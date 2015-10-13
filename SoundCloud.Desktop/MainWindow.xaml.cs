@@ -3,6 +3,7 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Un4seen.Bass;
@@ -14,8 +15,8 @@ namespace SoundCloud.Desktop {
     public partial class MainWindow : FaxUi.UiWindow {
         #region Properties
         //Application ID
-        internal const string ClientID = @"589e0ff400a0bc83ecd8eb20b94b57de";
-        internal const string ClientSecret = @"4194ded960527644e96fea6cedab671d";
+        internal const string ClientID = "589e0ff400a0bc83ecd8eb20b94b57de";
+        internal const string ClientSecret = "4194ded960527644e96fea6cedab671d";
 
         internal LikePage likePage;
         internal SettingsPage settingsPage;
@@ -23,10 +24,12 @@ namespace SoundCloud.Desktop {
 
         DispatcherTimer timer = new DispatcherTimer();
         string menuSelected = "";
+        public static MainWindow window;
         #endregion
 
         // Login and Initialize Application UI
         public MainWindow() {
+            window = this;
             // Loads all the settings
             Player.Init(new System.Windows.Interop.WindowInteropHelper(this).Handle);
             AppSettings.Load();
@@ -106,10 +109,8 @@ namespace SoundCloud.Desktop {
             var text = ((TextBlock)sender).Text.ToLower();
             if(!SoundCloudCore.IsConnected || menuSelected == text)
                 return;
-
-            //Indicate which menu item is selected
-            menuSelected = text;
-            switch(menuSelected) {
+            // Open page in frame
+            switch(menuSelected = text) {
                 case "stream":
                     contentFrame.Navigate((streamPage = streamPage ?? new StreamPage()));
                     return;
@@ -285,6 +286,52 @@ namespace SoundCloud.Desktop {
                 spectrum.Visibility = Visibility.Visible;
                 spectrumClose.Icon = FaxUi.MoonIcon.ArrowDown;
             }
+        }
+        #endregion
+
+        #region UI Features
+        /// <summary>
+        /// Creates a Brush from a hex value
+        /// </summary>
+        /// <param name="hex">ARGB Hex Color ex. #FF000000, #FFFFFFFF</param>
+        /// <returns></returns>
+        public static Brush FromHex(string hex) {
+            if(hex.Length == 9 && hex.StartsWith("#"))
+                return (Brush)new BrushConverter().ConvertFrom(hex);
+            else
+                throw new Exception("Brush hex was invalid.");
+        }
+
+        /// <summary>
+        /// Toggles spinner on the grid. If it toggled on then it returns true if not it returns false.
+        /// </summary>
+        public bool ToggleSpinner(Grid grid, Color color, double size = 100) {
+            grid.Dispatcher.Invoke(() => {
+                var spinner = grid.FindChild<FaxUi.IcoMoon>("spinner");
+                if(spinner != null) {
+                    grid.Children.Remove(spinner);
+                    return true;
+                }
+                else {
+                    var spin = new FaxUi.IcoMoon {
+                        VerticalAlignment = VerticalAlignment.Center,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+
+                        Icon = FaxUi.MoonIcon.Spinner,
+                        Width = size,
+                        Height = size,
+                        Foreground = new SolidColorBrush(color),
+                        Spin = true,
+                        SpinDuration = 1,
+                        Name = "spinner",
+                    };
+
+                    spin.Name = "spinner";
+                    grid.Children.Add(spin);
+                    return true;
+                }
+            });
+            return false;
         }
         #endregion
     }
