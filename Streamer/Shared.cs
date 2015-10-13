@@ -1,23 +1,28 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Streamer.Net {
-    internal enum HttpRequestMethod { GET, PUT, POST, DELETE }
-    //[System.Diagnostics.DebuggerStepThrough]
-    public class Login {
+    public enum HttpRequestMethod { GET, PUT, POST, DELETE }
+    [System.Diagnostics.DebuggerStepThrough]
+    public struct Login {
+        [JsonProperty("user")]
         public string User { get; private set; }
+        [JsonProperty("pass")]
         public string Pass { get; private set; }
         [JsonIgnore]
         public string ClientID { get; private set; }
         [JsonIgnore]
         public string ClientSecret { get; private set; }
 
+        /// <summary>
+        /// Constructs a new OAuth Login
+        /// </summary>
+        /// <param name="user">Username</param>
+        /// <param name="pass">Password</param>
+        /// <param name="clientId">OAuth client id</param>
+        /// <param name="clientSecret">OAuth client secret</param>
         public Login(string user, string pass, string clientId, string clientSecret) {
             User = user;
             Pass = pass;
@@ -25,10 +30,19 @@ namespace Streamer.Net {
             ClientSecret = clientSecret;
         }
 
-        public void SetClientInfo(string clientId, string clientSecret) { ClientID = clientId; ClientSecret = clientSecret; }
+        /// <summary>
+        /// Sets Client ID & Client Secret
+        /// </summary>
+        /// <param name="clientId">OAuth client id</param>
+        /// <param name="clientSecret">OAuth client secret</param>
+        public void SetClientInfo(string clientId, string clientSecret) {
+            ClientID = clientId;
+            ClientSecret = clientSecret;
+        }
     }
+
     [System.Diagnostics.DebuggerStepThrough]
-    internal class HttpRequest {
+    public static class HttpRequest {
         static WebRequest GetJsonRequest(string url, HttpRequestMethod method) {
             var request = WebRequest.Create(url);
 
@@ -39,20 +53,23 @@ namespace Streamer.Net {
             return request;
         }
 
-        internal static string SendRequest(string url, HttpRequestMethod method, int count = 3) {
+        public static string SendRequest(string url, HttpRequestMethod method, int count = 3) {
             Exception ex = null;
             for(int i = 0; i < count; i++) //Try sending 3 Times
             {
                 var request = GetJsonRequest(url, method);
                 try {
-                    HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
+                    var response = (HttpWebResponse)request.GetResponse();
                     if(response.StatusCode == HttpStatusCode.OK || response.StatusCode == HttpStatusCode.Created) {
-                        using(var stream = new StreamReader(response.GetResponseStream())) return stream.ReadToEnd();
+                        using(var stream = new StreamReader(response.GetResponseStream()))
+                            return stream.ReadToEnd();
                     }
-                    else if(response.StatusCode == HttpStatusCode.InternalServerError) count--;
+                    else if(response.StatusCode == HttpStatusCode.InternalServerError)
+                        count--;
                 }
-                catch(Exception e) { ex = e; }
+                catch(Exception e) {
+                    ex = e;
+                }
             }
             throw ex;
         }

@@ -104,7 +104,7 @@ namespace SoundCloud.Desktop {
         #region Menu Events
         public void Menu_Click(object sender, MouseEventArgs e) {
             var text = ((TextBlock)sender).Text.ToLower();
-            if(!SoundCloudClient.IsConnected || menuSelected == text)
+            if(!SoundCloudCore.IsConnected || menuSelected == text)
                 return;
 
             //Indicate which menu item is selected
@@ -193,7 +193,7 @@ namespace SoundCloud.Desktop {
             playerPop.HorizontalOffset = pos - 14; //Offset is 14
 
             if(Player.State != BASSActive.BASS_ACTIVE_STOPPED) {
-                var time = TimeSpan.FromSeconds((pos / playerPbar.ActualWidth) * SoundCloudClient.Collection[Player.Tracks[Player.TrackIndex]].Duration.TotalSeconds);
+                var time = TimeSpan.FromSeconds((pos / playerPbar.ActualWidth) * SoundCloudCore.Tracks[Player.Tracks[Player.TrackIndex]].Duration.TotalSeconds);
                 playerPopTxt.Text = time.ToTime();
             }
         }

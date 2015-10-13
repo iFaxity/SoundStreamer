@@ -5,14 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Windows;
-
-using System.Windows.Shapes;
 using System.Threading;
 using System.Reflection;
 using IWshRuntimeLibrary;
 
-namespace Installer
-{
+namespace Installer {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>

@@ -124,7 +124,7 @@ namespace SoundCloud.Desktop {
         /// <returns></returns>
         public static bool SetPos(double value) {
             try {
-                var sec = (value / 100) * SoundCloudClient.Collection[Tracks[TrackIndex]].Duration.TotalSeconds;
+                var sec = (value / 100) * SoundCloudCore.Tracks[Tracks[TrackIndex]].Duration.TotalSeconds;
                 var pos = Bass.BASS_ChannelSeconds2Bytes(channel, sec);
                 Bass.BASS_ChannelSetPosition(channel, pos);
                 return true;
@@ -200,7 +200,7 @@ namespace SoundCloud.Desktop {
 
                 // Play local
                 var path = localTrackPath + trackId + ".mp3";
-                var track = SoundCloudClient.Collection[trackId];
+                var track = SoundCloudCore.Tracks[trackId];
 
                 // If file exists locally then play it
                 if(File.Exists(path))
@@ -230,7 +230,7 @@ namespace SoundCloud.Desktop {
             });
         }
 
-        public static void DownloadTrack(int trackId) { DownloadTrack(SoundCloudClient.Collection[trackId]); }
+        public static void DownloadTrack(int trackId) { DownloadTrack(SoundCloudCore.Tracks[trackId]); }
         public static void DownloadTrack(Track track) {
             var wc = new WebClient();
             if(!Directory.Exists("Tracks"))

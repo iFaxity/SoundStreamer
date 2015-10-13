@@ -59,7 +59,7 @@
         </Grid>
 
         <!-- Content Frame -->
-        <Frame x:Name="contentFrame" Background="White" Margin="205,34,0,35" Panel.ZIndex="-1" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+        <Frame x:Name="contentFrame" Background="White" Margin="200,34,0,35" Panel.ZIndex="-1" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
 
         <!-- Wigdet Grid -->
         <Grid x:Name="widgets" Panel.ZIndex="1">

@@ -245,7 +245,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Streamer\Streamer.csproj">
       <Project>{f286e5ae-d398-4c13-914e-5891e84ea276}</Project>

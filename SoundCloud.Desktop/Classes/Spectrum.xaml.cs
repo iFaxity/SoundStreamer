@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using Un4seen.Bass;
@@ -28,10 +19,15 @@ namespace SoundCloud.Desktop {
         /// Gets/Sets the inividual Bar Width
         /// </summary>
         public int BarWidth {
-            get { return (int)GetValue(BarWidthProperty); }
-            set { SetValue(BarWidthProperty, value); UpdateBars(BarCount, value, this); }
+            get {
+                return (int)GetValue(BarWidthProperty);
+            }
+            set {
+                SetValue(BarWidthProperty, value);
+                UpdateBars(BarCount, value, this);
+            }
         }
-        public static readonly DependencyProperty BarWidthProperty = DependencyProperty.Register("BarWidth", typeof(int), typeof(Spectrum), new FrameworkPropertyMetadata(10, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(BarWidthChanged)));
+        public static readonly DependencyProperty BarWidthProperty = DependencyProperty.Register("BarWidth", typeof(int), typeof(Spectrum), new PropertyMetadata(10, new PropertyChangedCallback(BarWidthChanged)));
         static void BarWidthChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
             var source = (Spectrum)sender;
             UpdateBars(source.BarCount, (int)e.NewValue, source);
@@ -41,10 +37,15 @@ namespace SoundCloud.Desktop {
         /// Gets/Sets the amount of Bars in the Spectrum
         /// </summary>
         public int BarCount {
-            get { return (int)GetValue(BarCountProperty); }
-            set { SetValue(BarCountProperty, value); UpdateBars(value, BarWidth, this); }
+            get {
+                return (int)GetValue(BarCountProperty);
+            }
+            set {
+                SetValue(BarCountProperty, value);
+                UpdateBars(value, BarWidth, this);
+            }
         }
-        public static readonly DependencyProperty BarCountProperty = DependencyProperty.Register("BarCount", typeof(int), typeof(Spectrum), new FrameworkPropertyMetadata(16, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(BarCountChanged)));
+        public static readonly DependencyProperty BarCountProperty = DependencyProperty.Register("BarCount", typeof(int), typeof(Spectrum), new PropertyMetadata(16, new PropertyChangedCallback(BarCountChanged)));
         static void BarCountChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
             var source = (Spectrum)sender;
             UpdateBars((int)e.NewValue, source.BarWidth, source);
@@ -54,10 +55,14 @@ namespace SoundCloud.Desktop {
         /// Gets/Sets the Brush of all bars
         /// </summary>
         public Brush BarForeground {
-            get { return (Brush)GetValue(BarForegroundProperty); }
-            set { SetValue(BarForegroundProperty, value); }
+            get {
+                return (Brush)GetValue(BarForegroundProperty);
+            }
+            set {
+                SetValue(BarForegroundProperty, value);
+            }
         }
-        public static readonly DependencyProperty BarForegroundProperty = DependencyProperty.Register("BarForeground", typeof(Brush), typeof(Spectrum), new FrameworkPropertyMetadata(new BrushConverter().ConvertFromString("#FFFF4800"), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(BarForegroundChanged)));
+        public static readonly DependencyProperty BarForegroundProperty = DependencyProperty.Register("BarForeground", typeof(Brush), typeof(Spectrum), new PropertyMetadata(new BrushConverter().ConvertFromString("#FFFF4800"), new PropertyChangedCallback(BarForegroundChanged)));
         static void BarForegroundChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
             ((Spectrum)sender).spectrum.Background = (Brush)e.NewValue;
         }
@@ -66,10 +71,14 @@ namespace SoundCloud.Desktop {
         /// Gets/Sets the Brush of the Background
         /// </summary>
         public Brush BarBackground {
-            get { return (Brush)GetValue(BarBackgroundProperty); }
-            set { SetValue(BarBackgroundProperty, value); }
+            get {
+                return (Brush)GetValue(BarBackgroundProperty);
+            }
+            set {
+                SetValue(BarBackgroundProperty, value);
+            }
         }
-        public static readonly DependencyProperty BarBackgroundProperty = DependencyProperty.Register("BarBackground", typeof(Brush), typeof(Spectrum), new FrameworkPropertyMetadata(new BrushConverter().ConvertFromString("#FFBCBCBC"), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, new PropertyChangedCallback(BarBackgroundChanged)));
+        public static readonly DependencyProperty BarBackgroundProperty = DependencyProperty.Register("BarBackground", typeof(Brush), typeof(Spectrum), new PropertyMetadata(new BrushConverter().ConvertFromString("#FFBCBCBC"), new PropertyChangedCallback(BarBackgroundChanged)));
         static void BarBackgroundChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e) {
             foreach(Rectangle bar in ((Spectrum)sender).spectrum.Children)
                 bar.Fill = (Brush)e.NewValue;
@@ -81,13 +90,12 @@ namespace SoundCloud.Desktop {
             source.Width = count * width;
 
             for(int i = 0; i < count; i++) {
-                var bar = new Rectangle {
+                source.spectrum.Children.Add(new Rectangle {
                     Fill = source.BarBackground,
                     Width = width,
                     Height = source.ActualHeight,
                     VerticalAlignment = VerticalAlignment.Top
-                };
-                source.spectrum.Children.Add(bar);
+                });
             }
         }
         #endregion
