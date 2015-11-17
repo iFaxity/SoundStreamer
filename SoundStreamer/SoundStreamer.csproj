@@ -78,14 +78,17 @@
     <StartupObject>SoundStreamer.App</StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Bass.Net">
-      <HintPath>..\..\CSharp_Projects\dll\Bass.Net.dll</HintPath>
+    <Reference Include="Bass.Net, Version=2.4.11.0, Culture=neutral, PublicKeyToken=b7566c273e6ef480, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dll\Bass.Net.dll</HintPath>
     </Reference>
-    <Reference Include="FaxLib">
-      <HintPath>..\..\CSharp_Projects\dll\FaxLib.dll</HintPath>
+    <Reference Include="FaxLib, Version=2.0.5799.34953, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dll\FaxLib.dll</HintPath>
     </Reference>
-    <Reference Include="FaxUi">
-      <HintPath>..\..\CSharp_Projects\dll\FaxUi.dll</HintPath>
+    <Reference Include="FaxUI, Version=2.0.5799.34952, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\dll\FaxUI.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=7.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
