@@ -73,13 +73,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bass.cs" />
-    <Compile Include="Shared.cs" />
-    <Compile Include="SoundCloud.cs" />
+    <Compile Include="SoundCloud\Converters.cs" />
+    <Compile Include="SoundCloud\Enums.cs" />
+    <Compile Include="SoundCloud\Me.cs" />
+    <Compile Include="SoundCloud\Playlist.cs" />
+    <Compile Include="Streamer.cs" />
+    <Compile Include="SoundCloud\SoundCloud.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SoundCloud\Track.cs" />
+    <Compile Include="SoundCloud\User.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

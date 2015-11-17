@@ -1,4 +1,13 @@
-﻿using Ionic.Zip;
+﻿// SoundStreamer Todo List:
+//TODO: Following Tab         - People you follow & people following you
+//TODO: User pages            - Click user to get user's tracks and other info.
+//TODO: Customisable Hotkeys  - Custom hotkey combinations
+//TODO: Offline Mode          - Play downloaded tracks & Playlists
+//TODO: Create Playlists      - Create Online and Offline Playlists.
+//TODO: User Features         - Like tracks & Playlists, Follow people.
+//TODO: More Settings         - Audio visualizer toggler & Custom Hotkeys
+
+using Ionic.Zip;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -14,8 +23,8 @@ namespace Installer {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        static string appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\SoundCloud Desktop";
-        static string appExe = appDir + @"\SoundCloud Desktop.exe";
+        static string appDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\SoundStreamer";
+        static string appExe = appDir + @"\SoundStreamer.exe";
         static string version = "stable";
 
         public MainWindow() {
@@ -28,8 +37,8 @@ namespace Installer {
 
             // Check if SCDesktop is running
             foreach(var proc in Process.GetProcesses()) {
-                if(proc.ProcessName == "SoundCloud Desktop") {
-                    var res = MessageBox.Show("The SoundCloud Desktop application is running. Do you want to close it to continue setup?", "Application running", MessageBoxButton.YesNo);
+                if(proc.ProcessName == "SoundStreamer") {
+                    var res = MessageBox.Show("The SoundStreamer application is running. Do you want to close it to continue setup?", "Application running", MessageBoxButton.YesNo);
                     // Forces to close SCDesktop app
                     if(res == MessageBoxResult.Yes) {
                         proc.Kill();
@@ -64,7 +73,7 @@ namespace Installer {
                 }
                 else if(text == "Finish") {
                     if(cbxDeskIco.IsChecked.HasValue && cbxDeskIco.IsChecked.Value)
-                        CreateShortcut("SoundCloud Desktop", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), appExe);
+                        CreateShortcut("SoundStreamer", Environment.GetFolderPath(Environment.SpecialFolder.Desktop), appExe);
                     Exit();
                 }
             };
@@ -123,7 +132,7 @@ namespace Installer {
 
         // Exists the application & Starts SCDesktop
         void Exit() {
-            Process.Start(appDir + "\\SoundCloud Desktop.exe");
+            Process.Start(appDir + "\\SoundStreamer.exe");
             // Remove itself when done
             var Info = new ProcessStartInfo();
             Info.Arguments = "/C choice /C Y /N /D Y /T 3 & Del " + Assembly.GetExecutingAssembly().Location;
@@ -146,9 +155,9 @@ namespace Installer {
             var shell = new WshShell();
             var shortcut = (IWshShortcut)shell.CreateShortcut(shortcutLocation);
             // Properties
-            shortcut.Description = "The #1 Free SoundCloud application on your desktop";  // The description of the shortcut
-            shortcut.IconLocation = appExe + ", 0";            // The icon of the shortcut
-            shortcut.TargetPath = targetFileLocation;          // The path of the file that will launch when the shortcut is run
+            shortcut.Description = "The #1 free SoundCloud open source application on your desktop";  // The description of the shortcut
+            shortcut.IconLocation = appExe + ", 0";   // The icon of the shortcut
+            shortcut.TargetPath = targetFileLocation; // The path of the file that will launch when the shortcut is run
             shortcut.Save();
         }
         #endregion

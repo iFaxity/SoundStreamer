@@ -5,11 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Installer"
         mc:Ignorable="d"
-        Title="SoundCloud Desktop Installer" Height="211.516" Width="314.174" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="icon.ico">
+        Title="SoundStreamer Installer" Height="211.516" Width="314.174" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" Icon="icon.ico">
     <Grid>
         <Grid x:Name="splashGrid">
             <Button x:Name="btnStart" Content="Install" HorizontalAlignment="Left" Margin="196,111,0,0" VerticalAlignment="Top" Width="75" IsDefault="True" BorderBrush="#FF4D4D4D" Background="#FFD1D1D1"/>
-            <TextBlock HorizontalAlignment="Left" Margin="20.915,43.979,0,0" TextWrapping="Wrap" Text="SoundCloud Desktop" VerticalAlignment="Top" FontSize="26.667"/>
+            <TextBlock HorizontalAlignment="Left" Margin="59,44,0,0" TextWrapping="Wrap" Text="SoundStreamer" VerticalAlignment="Top" FontSize="26.667"/>
             <TextBlock HorizontalAlignment="Left" Margin="106.844,84.449,0,0" TextWrapping="Wrap" Text="Installer" VerticalAlignment="Top" FontSize="21.333" FontStyle="Italic" Foreground="#FF575757"/>
             <TextBlock HorizontalAlignment="Left" Margin="10,136,0,0" TextWrapping="Wrap" Text="*Not affiliated with SoundCloud or any of their products." VerticalAlignment="Top" Foreground="#FF575757"/>
         </Grid>

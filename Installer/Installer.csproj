@@ -93,9 +93,6 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="dll\Ionic.Zip.dll" />
   </ItemGroup>
   <ItemGroup>
@@ -112,6 +109,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="dll\Interop.IWshRuntimeLibrary.dll" />
+    <Resource Include="icon.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
