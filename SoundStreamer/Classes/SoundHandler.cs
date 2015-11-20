@@ -160,9 +160,8 @@ namespace SoundStreamer {
         public static void Shuffle() {
             var rnd = new Random();
             for(int i = Tracks.Count; i > 0; i--) {
-                int n = rnd.Next(i);
-
-                var value = Tracks[n];
+                int n = rnd.Next(i),
+                    value = Tracks[n];
                 Tracks[n] = Tracks[i];
                 Tracks[i] = value;
             }

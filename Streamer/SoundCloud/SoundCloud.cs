@@ -155,11 +155,7 @@ namespace Streamer.SoundCloud {
             return JsonConvert.DeserializeObject<T>(HttpRequest.SendRequest("https://api.soundcloud.com/" + url, method));
         }
         internal static T SendClientRequest<T>(string url, HttpRequestMethod method = HttpRequestMethod.GET) {
-            if(!url.EndsWith("?"))
-                url = url + "?" + PostID;
-            else
-                url += PostID;
-
+            url += !url.EndsWith("?") ? "?" + PostID : PostID;
             return JsonConvert.DeserializeObject<T>(HttpRequest.SendRequest(url, method));
         }
 

@@ -1,4 +1,13 @@
-﻿using Streamer.SoundCloud;
+﻿// SoundStreamer Todo List:
+//TODO: Following Tab         - People you follow & people following you
+//TODO: User pages            - Click user to get user's tracks and other info.
+//TODO: Customisable Hotkeys  - Custom hotkey combinations
+//TODO: Offline Mode          - Play downloaded tracks & Playlists
+//TODO: Create Playlists      - Create Online and Offline Playlists.
+//TODO: User Features         - Like tracks & Playlists, Follow people.
+//TODO: More Settings         - Audio visualizer toggler & Custom Hotkeys
+
+using Streamer.SoundCloud;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -300,7 +309,7 @@ namespace SoundStreamer {
             if(hex.Length == 9 && hex.StartsWith("#"))
                 return (Brush)new BrushConverter().ConvertFrom(hex);
             else
-                throw new Exception("Brush hex was invalid.");
+                throw new ArgumentException("Brush hex was invalid", "hex");
         }
 
         /// <summary>

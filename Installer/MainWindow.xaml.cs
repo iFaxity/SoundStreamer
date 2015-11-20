@@ -1,13 +1,4 @@
-﻿// SoundStreamer Todo List:
-//TODO: Following Tab         - People you follow & people following you
-//TODO: User pages            - Click user to get user's tracks and other info.
-//TODO: Customisable Hotkeys  - Custom hotkey combinations
-//TODO: Offline Mode          - Play downloaded tracks & Playlists
-//TODO: Create Playlists      - Create Online and Offline Playlists.
-//TODO: User Features         - Like tracks & Playlists, Follow people.
-//TODO: More Settings         - Audio visualizer toggler & Custom Hotkeys
-
-using Ionic.Zip;
+﻿using Ionic.Zip;
 using System;
 using System.Diagnostics;
 using System.IO;

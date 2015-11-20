@@ -58,6 +58,7 @@ namespace SoundStreamer {
             //download.MouseLeave += (sender, e) => download.Opacity = 1;
         }
 
+        // TODO: Show a playlist like a track but with a sub list. On click go to playlist page
         public CoverItem(Playlist playlist) {
 
         }

@@ -247,7 +247,6 @@
     <Content Include="Bass\x86\bass.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Resource Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Streamer\Streamer.csproj">
